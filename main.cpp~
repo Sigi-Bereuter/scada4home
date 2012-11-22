@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     
     //TODO: An Logtracer et.al. übergeben
     ControlManager *cMan = new ControlManager();
-    cMan->Start();
+    cMan.Start();
     
     return 0;
 }

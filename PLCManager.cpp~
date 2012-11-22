@@ -1,0 +1,294 @@
+/*
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) 2012  <copyright holder> <email>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+#include "PLCManager.h"
+#include "SharedTypes.h"
+
+PLCManager::PLCManager(IPLCEventSubscriber *argEventSubscriber,LogTracer *argLogger)
+{
+     _Logger = argLogger;
+     _EventSubscriber = argEventSubscriber;
+     _ModBusMutex = PTHREAD_MUTEX_INITIALIZER;
+     _MsgWriteIndex = 0;
+     _MsgReadindex = -1;
+}
+
+void PLCManager::IncrementWritePos()
+{ 
+  pthread_mutex_lock( &_ModBusMutex );
+  if(_MsgWriteIndex == 15)
+    _MsgWriteIndex = 0;
+  else
+    _MsgWriteIndex++;
+  
+  uint16_t write_reg[8];
+  write_reg[0] = _MsgWriteIndex;
+  int ret = modbus_write_registers(_ModbusProxy,0x0800,1,write_reg);
+  pthread_mutex_unlock( &_ModBusMutex );  
+  
+  if(ret == -1)
+    _Logger->Trace("Error modbus_write_registers (0x800)" ,modbus_strerror(errno));
+  
+}
+
+bool PLCManager::SendMessage(SCADAMessageTypes::T argMsgType, SCADASourceTypes::T argSrc, uint8_t argSrcIdx, Functions::T argFunction, uint8_t argTarget, uint8_t argValue)
+{
+  bool result = true;
+  
+  uint16_t write_reg[16];
+  
+  //Big-Endian Format
+  //Alles Ausgänge auf 0
+  
+  uint8_t msgType = (uint8_t)argMsgType;
+  uint8_t msgSrc = (uint8_t)argSrc;
+  uint8_t func = (uint8_t)argFunction;
+  
+  //Swap High/Low ByteOrder
+  uint8_t tab_int8[] = {msgSrc, msgType,func,argSrcIdx,argValue,argTarget};
+  //uint8_t tab_int8[] = {0, 1,2,3,4,5};
+  write_reg[0] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 0);
+  write_reg[1] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 2);
+  write_reg[2] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 4);
+      
+  
+  int msgSize = sizeof(ScadaMessage);
+  uint8_t wordCount = msgSize/2;
+  if(msgSize % 2 != 0)
+    wordCount++;
+  
+  int startAddr = 0x0805;  //0x800 + 5 Bytes Offset für Variablen
+  int offset = _MsgWriteIndex*wordCount;
+  //logTrace("Writing to offset ", offset);
+  pthread_mutex_lock( &_ModBusMutex );
+  int ret = modbus_write_registers(_ModbusProxy,startAddr + offset,wordCount,write_reg);
+  pthread_mutex_unlock( &_ModBusMutex );
+  if(ret == -1)
+  {
+    timeval newTime;
+    gettimeofday(&newTime, NULL);
+    long seconds = newTime.tv_sec - _LastSendTime.tv_sec;
+    _Logger->Trace("Error modbus_write_registers (0x805) after seconds:" ,  seconds );
+    _Logger->Trace("Error modbus_write_registers (0x805) " , modbus_strerror(errno));
+    result = false;
+  }
+  else
+    gettimeofday(&_LastSendTime, NULL);
+	
+  IncrementWritePos();
+  
+  return result;
+
+}
+
+bool PLCManager::InitPLC()
+{
+  _Logger->Trace("Init PLC... " , modbus_strerror(errno));
+  
+  int startAddr = 0x0800;  
+  int offset = 2;
+  uint16_t write_reg[16];
+  write_reg[0] = 1;
+  int ret = modbus_write_registers(_ModbusProxy,startAddr + offset,1,write_reg);
+  if(ret == -1)
+    _Logger->Trace("Error modbus_write_registers (0x802)" ,modbus_strerror(errno) );
+  
+  
+    
+  while(true)
+  {    
+    int startAddr = 0x0000;  
+    int offset = 2;
+    uint16_t read_reg[1];    
+    ret =modbus_read_registers(_ModbusProxy, startAddr + offset, 1, read_reg);    
+    if(ret == -1)		  
+	_Logger->Trace("Error modbus_read_registers " , modbus_strerror(errno) );
+    
+    if(read_reg[0] == 1)
+    {
+      startAddr = 0x0800; 
+      offset = 2;
+      write_reg[0] = 0;
+      int ret = modbus_write_registers(_ModbusProxy,startAddr + offset,1,write_reg);
+      if(ret == -1)
+	_Logger->Trace("Error modbus_write_registers (0x802)" , modbus_strerror(errno));
+  
+      _Logger->Trace( "PLC Init completed " );      
+      break;
+    }
+    
+    _Logger->Trace( "Waiting for PLC-InitCompleted ... " );
+    
+    usleep(1000000);    
+  }
+  
+  ReadPLCMessages();
+
+}
+
+bool PLCManager::CloseModBus()
+{
+  modbus_close(_ModbusProxy);
+}
+
+
+bool PLCManager::OpenModBus()
+{
+    bool result = true;
+    const char* ipAddress = "192.168.137.2";
+    int port = 502;
+    _ModbusProxy = modbus_new_tcp( ipAddress, port);
+    _Logger->Trace( "Connecting to Modbus device at",ipAddress);
+    int success = modbus_connect(_ModbusProxy);
+    if(success == -1)
+    {
+      _Logger->Trace("Error connecting Modbus device", modbus_strerror(errno) );
+      return false;      
+    }
+    else
+    {
+      _Logger->Trace( "Successfully connected to Modbus device" ,modbus_strerror(errno) );
+    }
+    
+    //WatchDog deaktiveren
+    uint16_t write_reg[16];
+    write_reg[0] = 0;
+    int ret = modbus_write_registers(_ModbusProxy,0x1120,1,write_reg);
+    if(ret == -1)
+    {
+      _Logger->Trace("Error modbus_write_registers (WatchDog)" , modbus_strerror(errno) );
+      result = false;
+    }
+
+    return result;
+}
+
+
+
+void PLCManager::ReadPLCMessages()
+{
+  //Read MsgWritePOS from PLC
+  int startAddr = 0x0000; 
+  int offset = 0;	//Am ersten Word liegt der WriteIndex !
+  uint16_t read_reg[4];    
+  int ret =modbus_read_registers(_ModbusProxy, startAddr + offset, 1, read_reg);    
+  if(ret == -1)	
+  {
+    _Logger->Trace("Error modbus_read_registers " , modbus_strerror(errno) );
+    return;
+  }
+  
+   
+  //_Logger->Trace("Got MsgWritePos from PLC " , read_reg[0]);
+  int msgWritePos = read_reg[0];
+  
+  //Bei Init ist ReadPos -1
+  if(_MsgReadindex == -1)
+  {
+    _Logger->Trace("Init ReadPos " , msgWritePos );
+    _MsgReadindex = msgWritePos;        
+  }
+  
+  PLCMessage curMsg;
+  startAddr = 0x0005;	//Die ersten 5 Bytes sinf für Varibalen reserviert 
+  offset = 0;
+  int msgSize = sizeof(PLCMessage);
+  uint8_t wordCount = msgSize/2;
+  if(msgSize % 2 != 0)
+    wordCount++;
+  
+  while(msgWritePos != _MsgReadindex)
+  { 
+    if(_MsgReadindex < 15)
+      _MsgReadindex++;
+    else
+      _MsgReadindex = 0;  
+    
+    offset = _MsgReadindex * wordCount;
+    
+    ret =modbus_read_registers(_ModbusProxy, startAddr + offset, wordCount, read_reg);  
+              
+    curMsg.MsgType = (PLCMessageTypes::T)(read_reg[0] & 0xFF);
+    curMsg.SourceType = (PLCSourceTypes::T)(read_reg[0] >> 8);
+    curMsg.SourceIndex = read_reg[1] & 0xFF;
+    curMsg.Property = (PLCUnitProperties::T)(read_reg[1] >> 8);
+    curMsg.Value = read_reg[2];
+    
+    _Logger->Trace("ReadPos " , _MsgReadindex );
+    _Logger->Trace("Received PLC-Message from ",curMsg.SourceType,curMsg.SourceIndex);
+   
+    if(_EventSubscriber != NULL)
+      _EventSubscriber->PLCMessageReceived(curMsg);
+	    
+  }  
+}
+
+void * PLCManager::PollLoop()
+{
+    int outputIdx = 0;
+    timeval nowTime;
+    while(1)
+    { 
+	//logTrace( "Sending Alive-Message to PLC ");
+	
+	//Für TCP_Alive,sonst macht der BC die TCP-Connection zu (nach 10sec)
+		
+	gettimeofday(&nowTime,NULL);
+	long diffSec = nowTime.tv_sec - _LastAlivePing.tv_sec;
+        long diffUsec = nowTime.tv_usec - _LastAlivePing.tv_usec;
+	if(diffSec > 5 )
+	{	 
+	  SendMessage(SCADAMessageTypes::Alive, SCADASourceTypes::SW_Keller, 0,Functions::OnOff,8,1);	
+	  _LastAlivePing = nowTime;
+	}
+	
+	ReadPLCMessages();
+			
+	usleep(1000000);
+	
+    }
+    return 0;
+}
+
+bool PLCManager::Start()
+{
+  _Logger->Trace("Starting PLCManager...");
+  bool success = OpenModBus();
+  if(success)
+    success = InitPLC();
+    
+  pthread_create( &_PollThread, NULL, LaunchMemberFunction,this); // create a thread running function1
+    
+  return success;
+
+}
+
+void PLCManager::Stop()
+{
+  CloseModBus();
+}
+
+static void *LaunchMemberFunction(void *obj)
+{
+    PLCManager *targetObj = reinterpret_cast<PLCManager *>(obj);
+    return targetObj->PollLoop();
+}
+
+
+

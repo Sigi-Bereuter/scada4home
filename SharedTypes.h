@@ -20,6 +20,8 @@
 #ifndef SHAREDTYPES_H
 #define SHAREDTYPES_H
 
+#include "SharedEnums.h"
+
 typedef struct
 {
     SCADAMessageTypes::T MsgType;
@@ -39,10 +41,24 @@ typedef struct
     uint16_t Value;    
 } PLCMessage;
 
+typedef struct
+{
+    CULMessageTypes::T MsgType;
+    CULSourceTypes::T SourceType;
+    uint8_t SourceIndex;    
+    CULUnitProperties::T Property;
+    uint16_t Value;    
+} CULMessage;
+
 class IPLCEventSubscriber
 {
   public:
     virtual void PLCMessageReceived(PLCMessage argMsg) = 0;
 };
 
+class ICULEventSubscriber
+{
+  public:
+    virtual void CULMessageReceived(CULMessage argMsg) = 0;
+};
 #endif // SHAREDTYPES_H

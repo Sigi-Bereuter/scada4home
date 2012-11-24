@@ -23,7 +23,7 @@ ControlManager::ControlManager()
 {
   _Logger = new LogTracer();
   _PLC = new PLCManager(this,_Logger);
-  
+  _CUL = new CULManager(this,_Logger); 
 
 }
 
@@ -38,6 +38,7 @@ bool ControlManager::Start()
   
   _Logger->Trace("Starting ControlManager...");
   _PLC->Start();
+  _CUL->Start();
   while(true)
   {    
     usleep(1000000);
@@ -47,6 +48,7 @@ bool ControlManager::Start()
 void ControlManager::Stop()
 {
   _PLC->Stop();
+  _CUL->Stop();
 }
 
 void ControlManager::PLCMessageReceived(PLCMessage argMsg)
@@ -54,5 +56,9 @@ void ControlManager::PLCMessageReceived(PLCMessage argMsg)
   _Logger->Trace("Received PLC_NewMessage Callback");
 }
 
+void ControlManager::CULMessageReceived(CULMessage argMsg)
+{
+  _Logger->Trace("Received CUL_NewMessage Callback");
+}
 
 

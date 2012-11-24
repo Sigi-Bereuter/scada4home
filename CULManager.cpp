@@ -18,23 +18,53 @@
 
 
 #include "CULManager.h"
+#include <sys/time.h>
 
-CULManager::CULManager(LogTracer *argLogger)
-{
+
+CULManager::CULManager(ICULEventSubscriber *argEventSubsciber, LogTracer *argLogger) 
+{  
   _Logger = argLogger;  
-
+  _EventSubscriber = argEventSubsciber;
+  _ITfsm = new IntertechnoFSM(argLogger);
 }
 
-bool CULManager::Start()
-{
-  
-  InitCUL();
-  
+
+
+void * CULManager::ProcessingLoop()
+{  
+    timeval nowTime;
+    timeval lastRCVTime;
+    int rcvCount;
+    const uint16_t RCV_BUFF_LEN = 512;
+    uint8_t rcvBuff[RCV_BUFF_LEN];
+    while(1)
+    { 			
+	
+	//logTrace("Reading from CUL...") ;
+	rcvCount = read(_DeviceHandle,rcvBuff,RCV_BUFF_LEN);
+	
+	gettimeofday(&nowTime,NULL);
+	long diffSec = nowTime.tv_sec - lastRCVTime.tv_sec;
+        long diffUsec = nowTime.tv_usec - lastRCVTime.tv_usec;
+	if(diffSec > 0 || diffUsec > 500000)
+	  _ITfsm->Reset();
+	
+	lastRCVTime = nowTime;
+	CULMessage newMsg;
+	bool telegramComplete = _ITfsm->Execute(rcvBuff,rcvCount,&newMsg);
+	
+	if(telegramComplete)
+	{
+	  //TODO: MAybe Async
+	  if(_EventSubscriber != NULL)
+	    _EventSubscriber->CULMessageReceived(newMsg);
+	}
+    }
+    return 0;
 }
 
-void CULManager::Stop()
-{
-}
+
+
 
 bool CULManager::InitCUL()
 {
@@ -110,5 +140,27 @@ bool CULManager::InitCUL()
   _Logger->Trace("CUL Init completed with Return " , rcvCount);  
   
   return true;
+}
+
+bool CULManager::Start()
+{
+  
+  _Logger->Trace("Starting CULManager...");
+  bool success = true;
+  if(success)
+    success = InitCUL();
+   
+  _ITfsm->Reset();
+  pthread_create( &_ProcessingThread, NULL, LaunchMemberFunction,this); // create a thread running function1
+    
+  return success;
+  
+}
+
+void CULManager::Stop()
+{
+  /* restore old port settings */
+    tcsetattr(_DeviceHandle,TCSANOW,&_OldTIO);
+    close(_DeviceHandle);
 }
 

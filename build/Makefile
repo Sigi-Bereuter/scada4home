@@ -180,6 +180,30 @@ ControlManager.cpp.s:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.cpp.s
 .PHONY : ControlManager.cpp.s
 
+IntertechnoFSM.o: IntertechnoFSM.cpp.o
+.PHONY : IntertechnoFSM.o
+
+# target to build an object file
+IntertechnoFSM.cpp.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o
+.PHONY : IntertechnoFSM.cpp.o
+
+IntertechnoFSM.i: IntertechnoFSM.cpp.i
+.PHONY : IntertechnoFSM.i
+
+# target to preprocess a source file
+IntertechnoFSM.cpp.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.i
+.PHONY : IntertechnoFSM.cpp.i
+
+IntertechnoFSM.s: IntertechnoFSM.cpp.s
+.PHONY : IntertechnoFSM.s
+
+# target to generate assembly for a file
+IntertechnoFSM.cpp.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.s
+.PHONY : IntertechnoFSM.cpp.s
+
 LogTracer.o: LogTracer.cpp.o
 .PHONY : LogTracer.o
 
@@ -270,6 +294,9 @@ help:
 	@echo "... ControlManager.o"
 	@echo "... ControlManager.i"
 	@echo "... ControlManager.s"
+	@echo "... IntertechnoFSM.o"
+	@echo "... IntertechnoFSM.i"
+	@echo "... IntertechnoFSM.s"
 	@echo "... LogTracer.o"
 	@echo "... LogTracer.i"
 	@echo "... LogTracer.s"

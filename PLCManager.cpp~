@@ -145,6 +145,7 @@ bool PLCManager::InitPLC()
 bool PLCManager::CloseModBus()
 {
   modbus_close(_ModbusProxy);
+  modbus_free(_ModbusProxy);
 }
 
 
@@ -239,7 +240,7 @@ void PLCManager::ReadPLCMessages()
   }  
 }
 
-void * PLCManager::PollLoop()
+void * PLCManager::ProcessingLoop()
 {
     int outputIdx = 0;
     timeval nowTime;
@@ -273,7 +274,7 @@ bool PLCManager::Start()
   if(success)
     success = InitPLC();
     
-  pthread_create( &_PollThread, NULL, LaunchMemberFunction,this); // create a thread running function1
+  pthread_create( &_ProcessingThread, NULL, LaunchMemberFunction,this); // create a thread running function1
     
   return success;
 
@@ -284,11 +285,6 @@ void PLCManager::Stop()
   CloseModBus();
 }
 
-static void *LaunchMemberFunction(void *obj)
-{
-    PLCManager *targetObj = reinterpret_cast<PLCManager *>(obj);
-    return targetObj->PollLoop();
-}
 
 
 

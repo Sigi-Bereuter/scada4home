@@ -145,6 +145,7 @@ bool PLCManager::InitPLC()
 bool PLCManager::CloseModBus()
 {
   modbus_close(_ModbusProxy);
+  modbus_free(_ModbusProxy);
 }
 
 
@@ -234,12 +235,15 @@ void PLCManager::ReadPLCMessages()
     _Logger->Trace("Received PLC-Message from ",curMsg.SourceType,curMsg.SourceIndex);
    
     if(_EventSubscriber != NULL)
+    {
+      //TODO: MAybe Async
       _EventSubscriber->PLCMessageReceived(curMsg);
+    }
 	    
   }  
 }
 
-void * PLCManager::PollLoop()
+void * PLCManager::ProcessingLoop()
 {
     int outputIdx = 0;
     timeval nowTime;
@@ -273,7 +277,7 @@ bool PLCManager::Start()
   if(success)
     success = InitPLC();
     
-  pthread_create( &_PollThread, NULL, LaunchMemberFunction,this); // create a thread running function1
+  pthread_create( &_ProcessingThread, NULL, LaunchMemberFunction,this); // create a thread running function1
     
   return success;
 

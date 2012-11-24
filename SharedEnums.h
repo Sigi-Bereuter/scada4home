@@ -45,4 +45,19 @@ namespace PLCUnitProperties
   enum T  : uint8_t {OnOff=1,UpDown=2};
 }
 
+namespace CULMessageTypes
+{
+  enum T : uint8_t {StatusUpdate=1};
+}
+
+namespace CULSourceTypes
+{
+  enum T : uint8_t {Switch=1,Remote=2};
+}
+
+namespace CULUnitProperties
+{
+  enum T  : uint8_t {OnOff=1,Dim=2};
+}
+
 #endif // SHAREDENUMS_H

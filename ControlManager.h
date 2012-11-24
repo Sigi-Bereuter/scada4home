@@ -22,17 +22,20 @@
 
 #include "LogTracer.h"
 #include "PLCManager.h"
+#include "CULManager.h"
 #include "SharedTypes.h"
 #include <termios.h>
 
 
 
-class ControlManager : public IPLCEventSubscriber
+class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber
 {
   private:
     LogTracer *_Logger;
     PLCManager *_PLC;
+    CULManager *_CUL;
     void PLCMessageReceived(PLCMessage argMsg);
+    void CULMessageReceived(CULMessage argMsg);
     
 
   public:

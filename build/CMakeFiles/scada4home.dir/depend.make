@@ -3,13 +3,18 @@
 
 CMakeFiles/scada4home.dir/CULManager.cpp.o: ../CULManager.cpp
 CMakeFiles/scada4home.dir/CULManager.cpp.o: ../CULManager.h
+CMakeFiles/scada4home.dir/CULManager.cpp.o: ../IntertechnoFSM.h
 CMakeFiles/scada4home.dir/CULManager.cpp.o: ../LogTracer.h
+CMakeFiles/scada4home.dir/CULManager.cpp.o: ../SharedEnums.h
+CMakeFiles/scada4home.dir/CULManager.cpp.o: ../SharedTypes.h
 
 CMakeFiles/scada4home.dir/CUNOEmulator.cpp.o: ../CUNOEmulator.cpp
 CMakeFiles/scada4home.dir/CUNOEmulator.cpp.o: ../CUNOEmulator.h
 
+CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../CULManager.h
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../ControlManager.cpp
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../ControlManager.h
+CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../IntertechnoFSM.h
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../PLCManager.h
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: ../SharedEnums.h
@@ -18,6 +23,12 @@ CMakeFiles/scada4home.dir/ControlManager.cpp.o: /usr/local/include/modbus/modbus
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: /usr/local/include/modbus/modbus-tcp.h
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: /usr/local/include/modbus/modbus-version.h
 CMakeFiles/scada4home.dir/ControlManager.cpp.o: /usr/local/include/modbus/modbus.h
+
+CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o: ../IntertechnoFSM.cpp
+CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o: ../IntertechnoFSM.h
+CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o: ../LogTracer.h
+CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o: ../SharedEnums.h
+CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o: ../SharedTypes.h
 
 CMakeFiles/scada4home.dir/LogTracer.cpp.o: ../LogTracer.cpp
 CMakeFiles/scada4home.dir/LogTracer.cpp.o: ../LogTracer.h

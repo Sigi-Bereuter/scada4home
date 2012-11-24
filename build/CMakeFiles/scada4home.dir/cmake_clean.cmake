@@ -1,4 +1,5 @@
 FILE(REMOVE_RECURSE
+  "CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o"
   "CMakeFiles/scada4home.dir/LogTracer.cpp.o"
   "CMakeFiles/scada4home.dir/ControlManager.cpp.o"
   "CMakeFiles/scada4home.dir/CULManager.cpp.o"

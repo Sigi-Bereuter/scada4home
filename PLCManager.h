@@ -40,7 +40,7 @@ class PLCManager
      int16_t _MsgReadindex;
      timeval _LastSendTime;
      timeval _LastAlivePing;
-     pthread_t _PollThread; 
+     pthread_t _ProcessingThread; 
      IPLCEventSubscriber *_EventSubscriber;
      void ReadPLCMessages();
      bool OpenModBus();
@@ -50,7 +50,7 @@ class PLCManager
      static void *LaunchMemberFunction(void *obj)
      {
 	PLCManager *targetObj = reinterpret_cast<PLCManager *>(obj);
-	return targetObj->PollLoop();
+	return targetObj->ProcessingLoop();
      }
 
      
@@ -62,7 +62,7 @@ class PLCManager
      bool SendMessage(SCADAMessageTypes::T argMsgType, SCADASourceTypes::T argSrc,uint8_t argSrcIdx,Functions::T argFunction,uint8_t argTarget,uint8_t argValue);
      bool Start();
      void Stop();
-     void * PollLoop();
+     void * ProcessingLoop();
 };
 
 #endif // PLCMANAGER_H

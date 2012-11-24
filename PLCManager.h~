@@ -48,10 +48,10 @@ class PLCManager
      bool CloseModBus();
      void IncrementWritePos();   
      static void *LaunchMemberFunction(void *obj)
-      {
+     {
 	PLCManager *targetObj = reinterpret_cast<PLCManager *>(obj);
 	return targetObj->PollLoop();
-      }
+     }
 
      
      

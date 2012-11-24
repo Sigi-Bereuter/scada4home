@@ -20,8 +20,29 @@
 #ifndef SHAREDENUMS_H
 #define SHAREDENUMS_H
 
-class SharedEnums
+namespace SCADAMessageTypes
 {
-};
+  enum T : uint8_t {Command=1, Event=2,Alive=3};
+}
+namespace PLCMessageTypes
+{
+  enum T : uint8_t {StatusUpdate=1};
+}
+namespace SCADASourceTypes
+{
+  enum T : uint8_t {Internal=1,ITZ500=2, SW_Keller=3};
+}
+namespace PLCSourceTypes
+{
+  enum T : uint8_t {Jalousie=1,Rollo=2};
+}
+namespace Functions
+{
+  enum T : uint8_t {OnOff=1,Dim=2};
+}
+namespace PLCUnitProperties
+{
+  enum T  : uint8_t {OnOff=1,UpDown=2};
+}
 
 #endif // SHAREDENUMS_H

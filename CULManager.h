@@ -20,22 +20,33 @@
 #ifndef CULMANAGER_H
 #define CULMANAGER_H
 
-#include "LogTracer.h";
+#include "LogTracer.h"
 #include <fcntl.h>
 #include <termios.h>
 #include <stdint.h>
 #include <cstdio>
+#include "IntertechnoFSM.h"
 
 class CULManager
 {
-  private:   
+  private:     
+    
     termios _OldTIO;
     int _DeviceHandle;
     LogTracer *_Logger;
+    pthread_t _ProcessingThread;
+    IntertechnoFSM *_ITfsm;
+    ICULEventSubscriber *_EventSubscriber;
     bool InitCUL();
+    void * ProcessingLoop();
+    static void *LaunchMemberFunction(void *obj)
+    {
+	CULManager *targetObj = reinterpret_cast<CULManager *>(obj);
+	return targetObj->ProcessingLoop();
+    }
     
   public:
-    CULManager(LogTracer *argLogger);
+    CULManager(ICULEventSubscriber *argEventSubsciber,LogTracer *argLogger);
     bool Start();
     void Stop();
 

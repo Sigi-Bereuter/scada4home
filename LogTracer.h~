@@ -21,6 +21,7 @@
 #define LOGTRACER_H
 
 #include <iostream>
+#include "SharedTypes.h"
 
 using namespace std;
 
@@ -38,6 +39,7 @@ private:
     void Trace(string argText1, string argText2);
     void Trace(string argText1, int argText2,bool argHighLevel);
     void Trace(string argText1, int argText2,int argText3);
+    void SetLogLevel(bool argHigh);
   
 };
 

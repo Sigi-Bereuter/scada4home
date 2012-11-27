@@ -24,6 +24,7 @@ ControlManager::ControlManager()
   _Logger = new LogTracer();
   _PLC = new PLCManager(this,_Logger);
   _CUL = new CULManager(this,_Logger); 
+  _HMI = new HMIManager(this,_Logger);
 
 }
 
@@ -39,16 +40,16 @@ bool ControlManager::Start()
   _Logger->Trace("Starting ControlManager...");
   _PLC->Start();
   _CUL->Start();
-  while(true)
-  {    
-    usleep(1000000);
-  }
+  _HMI->Start();
+ 
+  
 }
 
 void ControlManager::Stop()
 {
   _PLC->Stop();
   _CUL->Stop();
+  _HMI->Stop();
 }
 
 void ControlManager::PLCMessageReceived(PLCMessage argMsg)
@@ -59,6 +60,12 @@ void ControlManager::PLCMessageReceived(PLCMessage argMsg)
 void ControlManager::CULMessageReceived(CULMessage argMsg)
 {
   _Logger->Trace("Received CUL_NewMessage Callback");
+  _PLC->SendMessage(SCADAMessageTypes::Event,SCADASourceTypes::ITZ500,argMsg.SourceIndex,Functions::OnOff,1,argMsg.Value);
+}
+
+void ControlManager::HMIMessageReceived(HMIMessage argMsg)
+{
+  _Logger->Trace("Received HMI_NewMessage Callback");  
 }
 
 

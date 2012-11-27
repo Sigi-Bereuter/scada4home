@@ -152,9 +152,12 @@ bool PLCManager::CloseModBus()
 bool PLCManager::OpenModBus()
 {
     bool result = true;
-    const char* ipAddress = "192.168.137.2";
+    const char* ipAddress = "192.168.1.106";
     int port = 502;
     _ModbusProxy = modbus_new_tcp( ipAddress, port);
+    
+    modbus_set_debug(_ModbusProxy,true);
+    
     _Logger->Trace( "Connecting to Modbus device at",ipAddress);
     int success = modbus_connect(_ModbusProxy);
     if(success == -1)

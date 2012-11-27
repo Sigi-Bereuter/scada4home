@@ -113,6 +113,7 @@ bool CULManager::InitCUL()
   newtio.c_iflag = IGNPAR | ICRNL;
   newtio.c_oflag = 0;
   newtio.c_lflag = 0;
+  
   newtio.c_cc[VMIN]=0;
   newtio.c_cc[VTIME]=1;
   tcflush(_DeviceHandle, TCIFLUSH);
@@ -131,13 +132,14 @@ bool CULManager::InitCUL()
     cout << rcvBuff; 
     rcvCount = read(_DeviceHandle,rcvBuff,RCV_BUFF_LEN);
   }
+  _Logger->Trace("CUL Init completed with Return " , rcvCount);  
   
   newtio.c_cc[VMIN]=16;
   newtio.c_cc[VTIME]=0;
   tcflush(_DeviceHandle, TCIFLUSH);
   tcsetattr(_DeviceHandle,TCSANOW,&newtio);
   
-  _Logger->Trace("CUL Init completed with Return " , rcvCount);  
+
   
   return true;
 }

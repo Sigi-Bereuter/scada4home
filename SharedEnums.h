@@ -20,6 +20,8 @@
 #ifndef SHAREDENUMS_H
 #define SHAREDENUMS_H
 
+#include <stdint.h>
+
 namespace SCADAMessageTypes
 {
   enum T : uint8_t {Command=1, Event=2,Alive=3};
@@ -59,5 +61,21 @@ namespace CULUnitProperties
 {
   enum T  : uint8_t {OnOff=1,Dim=2};
 }
+
+namespace HMIMessageTypes
+{
+  enum T : uint8_t {Command=1,Request=2};
+}
+
+namespace HMISourceTypes
+{
+  enum T : uint8_t {Button=1,Slider=2};
+}
+
+namespace HMIUnitProperties
+{
+  enum T  : uint8_t {Status=1,Value=2};
+}
+
 
 #endif // SHAREDENUMS_H

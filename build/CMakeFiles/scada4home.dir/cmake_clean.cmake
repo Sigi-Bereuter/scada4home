@@ -1,4 +1,6 @@
 FILE(REMOVE_RECURSE
+  "CMakeFiles/scada4home.dir/TestMan.cpp.o"
+  "CMakeFiles/scada4home.dir/HMIManager.cpp.o"
   "CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o"
   "CMakeFiles/scada4home.dir/LogTracer.cpp.o"
   "CMakeFiles/scada4home.dir/ControlManager.cpp.o"
@@ -6,6 +8,7 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/scada4home.dir/CUNOEmulator.cpp.o"
   "CMakeFiles/scada4home.dir/PLCManager.cpp.o"
   "CMakeFiles/scada4home.dir/main.cpp.o"
+  "CMakeFiles/scada4home.dir/mongoose.cpp.o"
   "scada4home.pdb"
   "scada4home"
 )

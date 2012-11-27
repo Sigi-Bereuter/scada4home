@@ -180,6 +180,30 @@ ControlManager.cpp.s:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.cpp.s
 .PHONY : ControlManager.cpp.s
 
+HMIManager.o: HMIManager.cpp.o
+.PHONY : HMIManager.o
+
+# target to build an object file
+HMIManager.cpp.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.cpp.o
+.PHONY : HMIManager.cpp.o
+
+HMIManager.i: HMIManager.cpp.i
+.PHONY : HMIManager.i
+
+# target to preprocess a source file
+HMIManager.cpp.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.cpp.i
+.PHONY : HMIManager.cpp.i
+
+HMIManager.s: HMIManager.cpp.s
+.PHONY : HMIManager.s
+
+# target to generate assembly for a file
+HMIManager.cpp.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.cpp.s
+.PHONY : HMIManager.cpp.s
+
 IntertechnoFSM.o: IntertechnoFSM.cpp.o
 .PHONY : IntertechnoFSM.o
 
@@ -252,6 +276,30 @@ PLCManager.cpp.s:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.cpp.s
 .PHONY : PLCManager.cpp.s
 
+TestMan.o: TestMan.cpp.o
+.PHONY : TestMan.o
+
+# target to build an object file
+TestMan.cpp.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/TestMan.cpp.o
+.PHONY : TestMan.cpp.o
+
+TestMan.i: TestMan.cpp.i
+.PHONY : TestMan.i
+
+# target to preprocess a source file
+TestMan.cpp.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/TestMan.cpp.i
+.PHONY : TestMan.cpp.i
+
+TestMan.s: TestMan.cpp.s
+.PHONY : TestMan.s
+
+# target to generate assembly for a file
+TestMan.cpp.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/TestMan.cpp.s
+.PHONY : TestMan.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -276,6 +324,30 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+mongoose.o: mongoose.cpp.o
+.PHONY : mongoose.o
+
+# target to build an object file
+mongoose.cpp.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.cpp.o
+.PHONY : mongoose.cpp.o
+
+mongoose.i: mongoose.cpp.i
+.PHONY : mongoose.i
+
+# target to preprocess a source file
+mongoose.cpp.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.cpp.i
+.PHONY : mongoose.cpp.i
+
+mongoose.s: mongoose.cpp.s
+.PHONY : mongoose.s
+
+# target to generate assembly for a file
+mongoose.cpp.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.cpp.s
+.PHONY : mongoose.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -294,6 +366,9 @@ help:
 	@echo "... ControlManager.o"
 	@echo "... ControlManager.i"
 	@echo "... ControlManager.s"
+	@echo "... HMIManager.o"
+	@echo "... HMIManager.i"
+	@echo "... HMIManager.s"
 	@echo "... IntertechnoFSM.o"
 	@echo "... IntertechnoFSM.i"
 	@echo "... IntertechnoFSM.s"
@@ -303,9 +378,15 @@ help:
 	@echo "... PLCManager.o"
 	@echo "... PLCManager.i"
 	@echo "... PLCManager.s"
+	@echo "... TestMan.o"
+	@echo "... TestMan.i"
+	@echo "... TestMan.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... mongoose.o"
+	@echo "... mongoose.i"
+	@echo "... mongoose.s"
 .PHONY : help
 
 

@@ -50,6 +50,17 @@ typedef struct
     uint16_t Value;    
 } CULMessage;
 
+
+typedef struct
+{
+    HMIMessageTypes::T MsgType;
+    HMISourceTypes::T SourceType;
+    uint8_t SourceIndex;    
+    HMIUnitProperties::T Property;
+    uint16_t Value;    
+} HMIMessage;
+
+
 class IPLCEventSubscriber
 {
   public:
@@ -61,4 +72,12 @@ class ICULEventSubscriber
   public:
     virtual void CULMessageReceived(CULMessage argMsg) = 0;
 };
+
+
+class IHMIEventSubscriber
+{
+  public:
+    virtual void HMIMessageReceived(HMIMessage argMsg) = 0;
+};
+
 #endif // SHAREDTYPES_H

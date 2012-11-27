@@ -152,7 +152,7 @@ bool PLCManager::CloseModBus()
 bool PLCManager::OpenModBus()
 {
     bool result = true;
-    const char* ipAddress = "192.168.137.2";
+    const char* ipAddress = "192.168.1.106";
     int port = 502;
     _ModbusProxy = modbus_new_tcp( ipAddress, port);
     _Logger->Trace( "Connecting to Modbus device at",ipAddress);
@@ -235,7 +235,10 @@ void PLCManager::ReadPLCMessages()
     _Logger->Trace("Received PLC-Message from ",curMsg.SourceType,curMsg.SourceIndex);
    
     if(_EventSubscriber != NULL)
+    {
+      //TODO: MAybe Async
       _EventSubscriber->PLCMessageReceived(curMsg);
+    }
 	    
   }  
 }

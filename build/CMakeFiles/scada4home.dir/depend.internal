@@ -15,15 +15,24 @@ CMakeFiles/scada4home.dir/ControlManager.cpp.o
  /home/besi/projects/Scada4Home/CULManager.h
  /home/besi/projects/Scada4Home/ControlManager.cpp
  /home/besi/projects/Scada4Home/ControlManager.h
+ /home/besi/projects/Scada4Home/HMIManager.h
  /home/besi/projects/Scada4Home/IntertechnoFSM.h
  /home/besi/projects/Scada4Home/LogTracer.h
  /home/besi/projects/Scada4Home/PLCManager.h
  /home/besi/projects/Scada4Home/SharedEnums.h
  /home/besi/projects/Scada4Home/SharedTypes.h
+ /home/besi/projects/Scada4Home/mongoose.h
  /usr/local/include/modbus/modbus-rtu.h
  /usr/local/include/modbus/modbus-tcp.h
  /usr/local/include/modbus/modbus-version.h
  /usr/local/include/modbus/modbus.h
+CMakeFiles/scada4home.dir/HMIManager.cpp.o
+ /home/besi/projects/Scada4Home/HMIManager.cpp
+ /home/besi/projects/Scada4Home/HMIManager.h
+ /home/besi/projects/Scada4Home/LogTracer.h
+ /home/besi/projects/Scada4Home/SharedEnums.h
+ /home/besi/projects/Scada4Home/SharedTypes.h
+ /home/besi/projects/Scada4Home/mongoose.h
 CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o
  /home/besi/projects/Scada4Home/IntertechnoFSM.cpp
  /home/besi/projects/Scada4Home/IntertechnoFSM.h
@@ -43,14 +52,26 @@ CMakeFiles/scada4home.dir/PLCManager.cpp.o
  /usr/local/include/modbus/modbus-tcp.h
  /usr/local/include/modbus/modbus-version.h
  /usr/local/include/modbus/modbus.h
+CMakeFiles/scada4home.dir/TestMan.cpp.o
+ /home/besi/projects/Scada4Home/SharedEnums.h
+ /home/besi/projects/Scada4Home/SharedTypes.h
+ /home/besi/projects/Scada4Home/TestMan.cpp
+ /home/besi/projects/Scada4Home/TestMan.h
 CMakeFiles/scada4home.dir/main.cpp.o
+ /home/besi/projects/Scada4Home/CULManager.h
  /home/besi/projects/Scada4Home/ControlManager.h
+ /home/besi/projects/Scada4Home/HMIManager.h
+ /home/besi/projects/Scada4Home/IntertechnoFSM.h
  /home/besi/projects/Scada4Home/LogTracer.h
  /home/besi/projects/Scada4Home/PLCManager.h
  /home/besi/projects/Scada4Home/SharedEnums.h
  /home/besi/projects/Scada4Home/SharedTypes.h
  /home/besi/projects/Scada4Home/main.cpp
+ /home/besi/projects/Scada4Home/mongoose.h
  /usr/local/include/modbus/modbus-rtu.h
  /usr/local/include/modbus/modbus-tcp.h
  /usr/local/include/modbus/modbus-version.h
  /usr/local/include/modbus/modbus.h
+CMakeFiles/scada4home.dir/mongoose.cpp.o
+ /home/besi/projects/Scada4Home/mongoose.cpp
+ /home/besi/projects/Scada4Home/mongoose.h

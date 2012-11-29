@@ -156,7 +156,7 @@ bool PLCManager::OpenModBus()
     int port = 502;
     _ModbusProxy = modbus_new_tcp( ipAddress, port);
     
-    modbus_set_debug(_ModbusProxy,true);
+    //modbus_set_debug(_ModbusProxy,true);
     
     _Logger->Trace( "Connecting to Modbus device at",ipAddress);
     int success = modbus_connect(_ModbusProxy);

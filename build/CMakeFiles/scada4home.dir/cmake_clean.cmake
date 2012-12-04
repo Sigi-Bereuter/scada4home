@@ -1,4 +1,6 @@
 FILE(REMOVE_RECURSE
+  "CMakeFiles/scada4home.dir/ScadaItem.cpp.o"
+  "CMakeFiles/scada4home.dir/ItemRepository.cpp.o"
   "CMakeFiles/scada4home.dir/TestMan.cpp.o"
   "CMakeFiles/scada4home.dir/HMIManager.cpp.o"
   "CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o"

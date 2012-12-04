@@ -21,7 +21,6 @@
 #define PLCMANAGER_H
 
 #include "/usr/local/include/modbus/modbus.h"
-#include "SharedEnums.h"
 #include <pthread.h>
 #include <errno.h>
 #include "LogTracer.h"
@@ -59,7 +58,7 @@ class PLCManager
   public:
      PLCManager(IPLCEventSubscriber *argEventSubsciber,LogTracer *argLogger);
      ~PLCManager();
-     bool SendMessage(SCADAMessageTypes::T argMsgType, SCADASourceTypes::T argSrc,uint8_t argSrcIdx,Functions::T argFunction,uint8_t argTarget,uint8_t argValue);
+     bool SendMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc,uint8_t argSrcIdx,ItemProperties::T,uint16_t argValue);
      bool Start();
      void Stop();
      void * ProcessingLoop();

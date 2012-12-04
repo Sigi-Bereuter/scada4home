@@ -47,7 +47,7 @@ void PLCManager::IncrementWritePos()
   
 }
 
-bool PLCManager::SendMessage(SCADAMessageTypes::T argMsgType, SCADASourceTypes::T argSrc, uint8_t argSrcIdx, Functions::T argFunction, uint8_t argTarget, uint8_t argValue)
+bool PLCManager::SendMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc, uint8_t argSrcIdx, ItemProperties::T argProperty, uint16_t argValue)
 {
   bool result = true;
   
@@ -58,17 +58,19 @@ bool PLCManager::SendMessage(SCADAMessageTypes::T argMsgType, SCADASourceTypes::
   
   uint8_t msgType = (uint8_t)argMsgType;
   uint8_t msgSrc = (uint8_t)argSrc;
-  uint8_t func = (uint8_t)argFunction;
+  uint8_t prop = (uint8_t)argProperty;  
+  uint8_t valL = (uint8_t)argValue;
+  uint8_t valH = (uint8_t)(argValue >> 8);
   
   //Swap High/Low ByteOrder
-  uint8_t tab_int8[] = {msgSrc, msgType,func,argSrcIdx,argValue,argTarget};
+  uint8_t tab_int8[] = {msgSrc, msgType,prop,argSrcIdx,valH,valL};
   //uint8_t tab_int8[] = {0, 1,2,3,4,5};
   write_reg[0] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 0);
   write_reg[1] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 2);
   write_reg[2] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 4);
       
   
-  int msgSize = sizeof(ScadaMessage);
+  int msgSize = sizeof(ItemUpdateMessage);
   uint8_t wordCount = msgSize/2;
   if(msgSize % 2 != 0)
     wordCount++;
@@ -209,10 +211,10 @@ void PLCManager::ReadPLCMessages()
     _MsgReadindex = msgWritePos;        
   }
   
-  PLCMessage curMsg;
+  ItemUpdateMessage curMsg;
   startAddr = 0x0005;	//Die ersten 5 Bytes sinf für Varibalen reserviert 
   offset = 0;
-  int msgSize = sizeof(PLCMessage);
+  int msgSize = sizeof(ItemUpdateMessage);
   uint8_t wordCount = msgSize/2;
   if(msgSize % 2 != 0)
     wordCount++;
@@ -228,10 +230,10 @@ void PLCManager::ReadPLCMessages()
     
     ret =modbus_read_registers(_ModbusProxy, startAddr + offset, wordCount, read_reg);  
               
-    curMsg.MsgType = (PLCMessageTypes::T)(read_reg[0] & 0xFF);
-    curMsg.SourceType = (PLCSourceTypes::T)(read_reg[0] >> 8);
+    curMsg.MsgType = (ItemMessageTypes::T)(read_reg[0] & 0xFF);
+    curMsg.SourceType = (ItemTypes::T)(read_reg[0] >> 8);
     curMsg.SourceIndex = read_reg[1] & 0xFF;
-    curMsg.Property = (PLCUnitProperties::T)(read_reg[1] >> 8);
+    curMsg.Property = (ItemProperties::T)(read_reg[1] >> 8);
     curMsg.Value = read_reg[2];
     
     _Logger->Trace("ReadPos " , _MsgReadindex );
@@ -261,7 +263,7 @@ void * PLCManager::ProcessingLoop()
         long diffUsec = nowTime.tv_usec - _LastAlivePing.tv_usec;
 	if(diffSec > 5 )
 	{	 
-	  SendMessage(SCADAMessageTypes::Alive, SCADASourceTypes::SW_Keller, 0,Functions::OnOff,8,1);	
+	  SendMessage(ItemMessageTypes::Alive, ItemTypes::Dummy, 0,ItemProperties::Value,256);	
 	  _LastAlivePing = nowTime;
 	}
 	

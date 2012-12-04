@@ -32,10 +32,11 @@ static const char *ajax_reply_start =
 
 
 
-HMIManager::HMIManager(IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger)
+HMIManager::HMIManager(ItemRepository *argItemRepo,IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger)
 {
   _Logger = argLogger;
   _EventSubscriber = argEventSubsciber;
+  _ItemRepo = argItemRepo;
   _Instance = this;
   
 }
@@ -112,6 +113,7 @@ static void ajax_sitemaps(struct mg_connection *conn,const struct mg_request_inf
   long int size = ftell(f);
   rewind(f); 
   fread(str_sitemap,1,size,f);
+  fclose(f);
       
   int is_jsonp;
 
@@ -131,51 +133,124 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 {
   const struct mg_request_info *request_info = mg_get_request_info(conn);
   void *processed = const_cast<char*>("yes");
+  void *emptystring = const_cast<char*>("");
 
-  if (event == MG_NEW_REQUEST)
+  if (event == MG_WEBSOCKET_READY) 
+  {    
+    printf("MG_WEBSOCKET_READY\r\n");
+    unsigned char buf[40];
+    buf[0] = 0x81;
+    buf[1] = snprintf((char *) buf + 2, sizeof(buf) - 2, "%s", "server ready");
+    mg_write(conn, buf, 2 + buf[1]);
+    return emptystring;  // MG_WEBSOCKET_READY return value is ignored
+  } 
+  else if (event == MG_WEBSOCKET_CONNECT) 
+  {   
+    printf("MG_WEBSOCKET_CONNECT\r\n");    
+    return NULL;  
+  } 
+  else if (event == MG_WEBSOCKET_MESSAGE)
   {
-    /*
-    if (strcmp(request_info->uri, "/static/version") == 0) 
+    printf("MG_WEBSOCKET_MESSAGE\r\n");
+    unsigned char buf[200];
+    unsigned char reply[200];
+    int n, i, mask_len;
+    int exor, msg_len, len;
+
+    // Read message from the client.
+    // Accept only small (<126 bytes) messages.
+    len = 0;
+    msg_len = mask_len = 0;
+    for (;;) 
     {
-      ajax_static_version(conn,request_info);
+      if ((n = mg_read(conn, buf + len, sizeof(buf) - len)) <= 0)
+      {
+        return emptystring;  // Read error, close websocket
+      }
+      len += n;
+      if (len >= 2) {
+        msg_len = buf[1] & 127;
+        mask_len = (buf[1] & 128) ? 4 : 0;
+        if (msg_len > 125) {
+          return emptystring; // Message is too long, close websocket
+        }
+        // If we've buffered the whole message, exit the loop
+        if (len >= 2 + mask_len + msg_len) {
+          break;
+        }
+      }
+    }
+
+    // Prepare frame
+    reply[0] = 0x81;  // text, FIN set
+    reply[1] = msg_len;
+
+    // Copy message from request to reply, applying the mask if required.
+    for (i = 0; i < msg_len; i++) 
+    {
+      exor = mask_len == 0 ? 0 : buf[2 + (i % 4)];
+      reply[i + 2] = buf[i + 2 + mask_len] ^ exor;
+    }
+
+    // Echo the message back to the client
+    mg_write(conn, reply, 2 + msg_len);
+
+    // Return non-NULL means stoping websocket conversation.
+    // Close the conversation if client has sent us "exit" string.
+    return memcmp(reply + 2, "exit", 4) == 0 ? emptystring : NULL;
+  }
+  else if (event == MG_NEW_REQUEST)
+  {
+    bool isPost = strcmp(request_info->request_method , "POST") == 0;
+    
+    if(isPost)
+    {
+      printf("MG_POST_DATA\n");
+        
+      // Read POST data
+      string baseUrl = "/rest/items/";
+      string postURI =  request_info->uri;
+      bool isSetItems = baseUrl.compare(0,baseUrl.length(),request_info->uri);
+      if(isSetItems)
+      {	
+	// User has submitted a form, show submitted data and a variable value
+	char post_data[2048];
+	int post_data_len;
+	
+	string itemName = postURI.substr(baseUrl.length());
+	
+	post_data_len = mg_read(conn, post_data, sizeof(post_data));
+	bool isOFF = strcmp(post_data, "OFF") == 0;
+	bool isLight = strcmp(request_info->uri,"/rest/items/Light_FF_Bath_Ceiling/");
+	
+	printf(" %s is %s \n ",request_info->uri,post_data);
+      }
       
-    }*/
-    if(strcmp(request_info->uri, "/rest/sitemaps") == 0) 
-    {
-      ajax_sitemaps(conn,request_info,"start.sitemap");      
-    }
-    else if (strcmp(request_info->uri, "/rest/sitemaps/demo") == 0) 
-    {
-      ajax_sitemaps(conn,request_info,"demo.sitemap");      
-    }
-    else if (strcmp(request_info->uri, "/rest/sitemaps/demo/demo") == 0) 
-    {
-      ajax_sitemaps(conn,request_info,"demo_demo.sitemap");      
-    }
-    else
-    {
       processed = NULL;
     }
-    /*
-    HMIManager* hmi = HMIManager::GetInstance();
-    int recs = hmi->GetMessagCount();
-    
-    char content[1024];
-    int content_length = snprintf(content, sizeof(content),"Hello from mongoose! Remote port: %d records %d",request_info->remote_port,recs);
-    mg_printf(conn,
-              "HTTP/1.1 200 OK\r\n"
-              "Content-Type: text/plain\r\n"
-              "Content-Length: %d\r\n"        // Always set Content-Length
-              "\r\n"
-              "%s",
-              content_length, content);
-    
-    // Mark as processed
-    string result = "";
-    return &result;
-    
-    */
-				  
+    else
+    {    
+      if(strcmp(request_info->uri, "/rest/sitemaps") == 0) 
+      {
+	ajax_sitemaps(conn,request_info,"start.sitemap");      
+      }
+      else if (strcmp(request_info->uri, "/rest/sitemaps/demo") == 0) 
+      {
+	ajax_sitemaps(conn,request_info,"demo.sitemap");      
+      }
+      else if (strcmp(request_info->uri, "/rest/sitemaps/demo/demo") == 0) 
+      {
+	ajax_sitemaps(conn,request_info,"demo_demo.sitemap");      
+      }
+      else if (strcmp(request_info->uri, "/rest/sitemaps/demo/FF_Bath") == 0) 
+      {
+	ajax_sitemaps(conn,request_info,"ffbath.sitemap");      
+      }     
+      else
+      {    
+	processed = NULL;
+      } 
+    }   
   } 
   else
   {
@@ -199,6 +274,8 @@ bool HMIManager::InitWebserver()
 bool HMIManager::Start()
 {
   _Logger->Trace("Starting HMIManager... ");
+  _Logger->Trace("Loading SiteMaps... ");
+  _Logger->Trace("Init ItemMappings... ");
  
   bool  success = InitWebserver();    
       

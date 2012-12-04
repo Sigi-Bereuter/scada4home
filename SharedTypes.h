@@ -20,64 +20,50 @@
 #ifndef SHAREDTYPES_H
 #define SHAREDTYPES_H
 
-#include "SharedEnums.h"
+#include <stdint.h>
+
+
+namespace ItemMessageTypes
+{
+  enum T : uint8_t {StatusUpdate=1, Event=2,Alive=3};
+}
+namespace ItemTypes
+{
+  enum T : uint8_t {Jalousie=1,Rollo=2,Switch=3,Dummy=99};
+}
+namespace ItemProperties
+{
+  enum T  : uint8_t {Status=1,Value=2};
+}
 
 typedef struct
 {
-    SCADAMessageTypes::T MsgType;
-    SCADASourceTypes::T Source;
-    uint8_t SourceIndex;
-    Functions::T Func;
-    uint8_t Target;
-    uint8_t Value;    
-} ScadaMessage; 
-
-typedef struct
-{
-    PLCMessageTypes::T MsgType;
-    PLCSourceTypes::T SourceType;
+    ItemMessageTypes::T MsgType;
+    ItemTypes::T SourceType;
     uint8_t SourceIndex;    
-    PLCUnitProperties::T Property;
+    ItemProperties::T Property;
     uint16_t Value;    
-} PLCMessage;
+} ItemUpdateMessage;
 
-typedef struct
-{
-    CULMessageTypes::T MsgType;
-    CULSourceTypes::T SourceType;
-    uint8_t SourceIndex;    
-    CULUnitProperties::T Property;
-    uint16_t Value;    
-} CULMessage;
-
-
-typedef struct
-{
-    HMIMessageTypes::T MsgType;
-    HMISourceTypes::T SourceType;
-    uint8_t SourceIndex;    
-    HMIUnitProperties::T Property;
-    uint16_t Value;    
-} HMIMessage;
 
 
 class IPLCEventSubscriber
 {
   public:
-    virtual void PLCMessageReceived(PLCMessage argMsg) = 0;
+    virtual void PLCMessageReceived(ItemUpdateMessage argMsg) = 0;
 };
 
 class ICULEventSubscriber
 {
   public:
-    virtual void CULMessageReceived(CULMessage argMsg) = 0;
+    virtual void CULMessageReceived(ItemUpdateMessage argMsg) = 0;
 };
 
 
 class IHMIEventSubscriber
 {
   public:
-    virtual void HMIMessageReceived(HMIMessage argMsg) = 0;
+    virtual void HMIMessageReceived(ItemUpdateMessage argMsg) = 0;
 };
 
 #endif // SHAREDTYPES_H

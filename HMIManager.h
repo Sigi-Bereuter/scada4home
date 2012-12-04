@@ -23,7 +23,10 @@
 
 #include "LogTracer.h"
 #include "SharedTypes.h"
+#include "ScadaItem.h"
+#include "ItemRepository.h"
 #include "mongoose.h"
+#include <map>
 
 
 class HMIManager
@@ -33,13 +36,15 @@ class HMIManager
     IHMIEventSubscriber *_EventSubscriber;
     mg_context *_Webserver;    
     static HMIManager *_Instance;
+    std::map<string,ScadaItem*> _HmiToScadaMappings;    
+    ItemRepository *_ItemRepo;
     bool InitWebserver();
     void CloseWebserver();    
 
   public:    
     static HMIManager *GetInstance();
     virtual ~HMIManager();
-    HMIManager(IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+    HMIManager(ItemRepository *argItemRepo, IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger);
     bool Start();
     void Stop();
     int GetMessagCount();

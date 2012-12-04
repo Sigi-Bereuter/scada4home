@@ -228,6 +228,30 @@ IntertechnoFSM.cpp.s:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.s
 .PHONY : IntertechnoFSM.cpp.s
 
+ItemRepository.o: ItemRepository.cpp.o
+.PHONY : ItemRepository.o
+
+# target to build an object file
+ItemRepository.cpp.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.cpp.o
+.PHONY : ItemRepository.cpp.o
+
+ItemRepository.i: ItemRepository.cpp.i
+.PHONY : ItemRepository.i
+
+# target to preprocess a source file
+ItemRepository.cpp.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.cpp.i
+.PHONY : ItemRepository.cpp.i
+
+ItemRepository.s: ItemRepository.cpp.s
+.PHONY : ItemRepository.s
+
+# target to generate assembly for a file
+ItemRepository.cpp.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.cpp.s
+.PHONY : ItemRepository.cpp.s
+
 LogTracer.o: LogTracer.cpp.o
 .PHONY : LogTracer.o
 
@@ -275,6 +299,30 @@ PLCManager.s: PLCManager.cpp.s
 PLCManager.cpp.s:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.cpp.s
 .PHONY : PLCManager.cpp.s
+
+ScadaItem.o: ScadaItem.cpp.o
+.PHONY : ScadaItem.o
+
+# target to build an object file
+ScadaItem.cpp.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.cpp.o
+.PHONY : ScadaItem.cpp.o
+
+ScadaItem.i: ScadaItem.cpp.i
+.PHONY : ScadaItem.i
+
+# target to preprocess a source file
+ScadaItem.cpp.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.cpp.i
+.PHONY : ScadaItem.cpp.i
+
+ScadaItem.s: ScadaItem.cpp.s
+.PHONY : ScadaItem.s
+
+# target to generate assembly for a file
+ScadaItem.cpp.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.cpp.s
+.PHONY : ScadaItem.cpp.s
 
 TestMan.o: TestMan.cpp.o
 .PHONY : TestMan.o
@@ -372,12 +420,18 @@ help:
 	@echo "... IntertechnoFSM.o"
 	@echo "... IntertechnoFSM.i"
 	@echo "... IntertechnoFSM.s"
+	@echo "... ItemRepository.o"
+	@echo "... ItemRepository.i"
+	@echo "... ItemRepository.s"
 	@echo "... LogTracer.o"
 	@echo "... LogTracer.i"
 	@echo "... LogTracer.s"
 	@echo "... PLCManager.o"
 	@echo "... PLCManager.i"
 	@echo "... PLCManager.s"
+	@echo "... ScadaItem.o"
+	@echo "... ScadaItem.i"
+	@echo "... ScadaItem.s"
 	@echo "... TestMan.o"
 	@echo "... TestMan.i"
 	@echo "... TestMan.s"

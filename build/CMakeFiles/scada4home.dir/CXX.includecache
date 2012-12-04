@@ -21,20 +21,38 @@ LogTracer.h
 /home/besi/projects/Scada4Home/LogTracer.h
 SharedTypes.h
 /home/besi/projects/Scada4Home/SharedTypes.h
+ScadaItem.h
+/home/besi/projects/Scada4Home/ScadaItem.h
+ItemRepository.h
+/home/besi/projects/Scada4Home/ItemRepository.h
 mongoose.h
 /home/besi/projects/Scada4Home/mongoose.h
+map
+-
+
+/home/besi/projects/Scada4Home/ItemRepository.h
+map
+-
+vector
+-
+ScadaItem.h
+/home/besi/projects/Scada4Home/ScadaItem.h
+SharedTypes.h
+/home/besi/projects/Scada4Home/SharedTypes.h
 
 /home/besi/projects/Scada4Home/LogTracer.h
 iostream
 -
 
-/home/besi/projects/Scada4Home/SharedEnums.h
-stdint.h
+/home/besi/projects/Scada4Home/ScadaItem.h
+SharedTypes.h
+/home/besi/projects/Scada4Home/SharedTypes.h
+string
 -
 
 /home/besi/projects/Scada4Home/SharedTypes.h
-SharedEnums.h
-/home/besi/projects/Scada4Home/SharedEnums.h
+stdint.h
+-
 
 /home/besi/projects/Scada4Home/mongoose.h
 stdio.h

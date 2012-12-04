@@ -22,9 +22,10 @@
 ControlManager::ControlManager()
 {
   _Logger = new LogTracer();
+  _ItemRepo = new ItemRepository();
   _PLC = new PLCManager(this,_Logger);
   _CUL = new CULManager(this,_Logger); 
-  _HMI = new HMIManager(this,_Logger);
+  _HMI = new HMIManager(_ItemRepo,this,_Logger);
 
 }
 
@@ -52,18 +53,18 @@ void ControlManager::Stop()
   _HMI->Stop();
 }
 
-void ControlManager::PLCMessageReceived(PLCMessage argMsg)
+void ControlManager::PLCMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received PLC_NewMessage Callback");
 }
 
-void ControlManager::CULMessageReceived(CULMessage argMsg)
+void ControlManager::CULMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received CUL_NewMessage Callback");
-  _PLC->SendMessage(SCADAMessageTypes::Event,SCADASourceTypes::ITZ500,argMsg.SourceIndex,Functions::OnOff,1,argMsg.Value);
+  _PLC->SendMessage(ItemMessageTypes::Event,ItemTypes::Switch,argMsg.SourceIndex,ItemProperties::Status,argMsg.Value);
 }
 
-void ControlManager::HMIMessageReceived(HMIMessage argMsg)
+void ControlManager::HMIMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received HMI_NewMessage Callback");  
 }

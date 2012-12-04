@@ -50,7 +50,7 @@ void * CULManager::ProcessingLoop()
 	  _ITfsm->Reset();
 	
 	lastRCVTime = nowTime;
-	CULMessage newMsg;
+	ItemUpdateMessage newMsg;
 	bool telegramComplete = _ITfsm->Execute(rcvBuff,rcvCount,&newMsg);
 	
 	if(telegramComplete)

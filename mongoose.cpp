@@ -137,6 +137,8 @@ typedef long off_t;
 #define fileno(x) _fileno(x)
 #endif // !fileno MINGW #defines fileno
 
+#define	USE_WEBSOCKET
+
 typedef HANDLE pthread_mutex_t;
 typedef struct {HANDLE signal, broadcast;} pthread_cond_t;
 typedef DWORD pthread_t;
@@ -3542,7 +3544,7 @@ static void handle_propfind(struct mg_connection *conn, const char* path,
   conn->num_bytes_sent += mg_printf(conn, "%s\n", "</d:multistatus>");
 }
 
-#if defined(USE_WEBSOCKET)
+//#if defined(USE_WEBSOCKET)
 
 // START OF SHA-1 code
 // Copyright(c) By Steve Reid <steve@edmweb.com>
@@ -3781,7 +3783,7 @@ static int is_websocket_request(const struct mg_connection *conn) {
     !mg_strcasecmp(upgrade, "websocket") &&
     !mg_strcasecmp(connection, "Upgrade");
 }
-#endif // !USE_WEBSOCKET
+//#endif // !USE_WEBSOCKET
 
 static int isbyte(int n) {
   return n >= 0 && n <= 255;
@@ -3857,10 +3859,10 @@ static void handle_request(struct mg_connection *conn) {
   DEBUG_TRACE(("%s", ri->uri));
   if (!check_authorization(conn, path)) {
     send_authorization_request(conn);
-#if defined(USE_WEBSOCKET)
+//#if defined(USE_WEBSOCKET)
   } else if (is_websocket_request(conn)) {
     handle_websocket_request(conn);
-#endif
+//#endif
   } else if (call_user(conn, MG_NEW_REQUEST) != NULL) {
     // Do nothing, callback has served the request
   } else if (!strcmp(ri->request_method, "OPTIONS")) {

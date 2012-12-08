@@ -64,12 +64,13 @@ void ControlManager::PLCMessageReceived(ItemUpdateMessage argMsg)
 void ControlManager::CULMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received CUL_NewMessage Callback");
-  _PLC->SendMessage(ItemMessageTypes::Event,ItemTypes::Switch,argMsg.SourceIndex,ItemProperties::Status,argMsg.Value);
+  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
 }
 
 void ControlManager::HMIMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received HMI_NewMessage Callback");  
+  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
 }
 
 

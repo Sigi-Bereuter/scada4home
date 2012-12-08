@@ -20,6 +20,10 @@
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
+#include <sstream>
+#include <dirent.h> // directory header
+#include <errno.h>
 
 using namespace std;
 
@@ -52,6 +56,19 @@ int HMIManager::GetMessagCount()
 {
   return 999;
 }
+
+void HMIManager::FireNewMessage(ItemUpdateMessage argMsg)
+{
+  if(_EventSubscriber != NULL)
+    _EventSubscriber->HMIMessageReceived(argMsg);
+}
+
+string HMIManager::GetSiteMap(string argSiteMapName)
+{
+  return _SiteMaps[argSiteMapName];
+}
+
+
 
 static void get_qsvar(const struct mg_request_info *request_info,const char *name, char *dst, size_t dst_len) 
 {
@@ -95,38 +112,60 @@ static void ajax_static_version(struct mg_connection *conn,const struct mg_reque
 }
 
 static void ajax_sitemaps(struct mg_connection *conn,const struct mg_request_info *request_info,const char* argSiteMapName)
-{
-  
+{  
   char last_id[32];
-  char str_sitemap[32000];
-  
-  char filePath[200] = "greent/";
-  strcat(filePath, argSiteMapName);
-  
-  FILE *f;
-  if((f=fopen(filePath,"r"))==NULL)
-  {
-    printf("\nUnable t open sitemap file");
-    return;
-  }
-  fseek(f, 0, SEEK_END);
-  long int size = ftell(f);
-  rewind(f); 
-  fread(str_sitemap,1,size,f);
-  fclose(f);
-      
   int is_jsonp;
-
   mg_printf(conn, "%s", ajax_reply_start);
   is_jsonp = handle_jsonp(conn, request_info);
 
   get_qsvar(request_info, "last_id", last_id, sizeof(last_id));  
-  mg_printf(conn, "%s", str_sitemap);
+  string siteMap = HMIManager::GetInstance()->GetSiteMap(argSiteMapName); 
+  const char *strContent = siteMap.c_str();
+  mg_printf(conn, "%s", strContent);
   
 
   if (is_jsonp) {
     mg_printf(conn, "%s", ")");
   }
+}
+
+static void Tokenize(const string& str,vector<string>& tokens,const string& delimiters = " ")
+{
+    // Skip delimiters at beginning.
+    string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+    // Find first "non-delimiter".
+    string::size_type pos     = str.find_first_of(delimiters, lastPos);
+
+    while (string::npos != pos || string::npos != lastPos)
+    {
+        // Found a token, add it to the vector.
+        tokens.push_back(str.substr(lastPos, pos - lastPos));
+        // Skip delimiters.  Note the "not_of"
+        lastPos = str.find_first_not_of(delimiters, pos);
+        // Find next "non-delimiter"
+        pos = str.find_first_of(delimiters, lastPos);
+    }
+}
+
+int16_t ConvertToItemValue(string argStringValue,ItemTypes::T argItemType)
+{
+  int16_t result = 0;
+  if(argStringValue == "ON")
+    return 1;
+  else if(argStringValue == "OFF")
+    return 0;
+  else if(argStringValue == "UP")
+    return 1;
+  else if(argStringValue == "DOWN")
+    return 2;
+  else if(argStringValue == "STOP")
+    return 0;
+  else
+  {
+    printf("ItemValue %s undefined\r\n",argStringValue.c_str());    
+    return 0;  
+  }
+ 
 }
 
 static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
@@ -214,17 +253,50 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
       if(isSetItems)
       {	
 	// User has submitted a form, show submitted data and a variable value
-	char post_data[2048];
-	int post_data_len;
 	
 	string itemName = postURI.substr(baseUrl.length());
+	itemName.erase(itemName.length()-1,1);   //Remove trailing '/'	
+	vector<string> nameParts;	
+	Tokenize(itemName, nameParts,".");
 	
+	if(nameParts.size() != 2)
+	{
+	  printf("itemName %s does not follow the num.num Notation\n",itemName.c_str());
+	  return processed;
+	}
+		
+	stringstream ssType(nameParts[0]); 
+	int itemType;
+	if( (ssType >> itemType).fail() )
+	{
+	  printf("itemName %s does not follow the num.num Notation\n",itemName.c_str());
+	}
+	stringstream ssIndex;
+	ssIndex << nameParts[1];
+	int itemIndex;
+	if( (ssIndex >> itemIndex).fail())
+	{
+	  printf("itemName %s does not follow the num.num Notation\n",itemName.c_str());
+	}
+		
+	char post_data[2048];
+	int post_data_len;	
 	post_data_len = mg_read(conn, post_data, sizeof(post_data));
-	bool isOFF = strcmp(post_data, "OFF") == 0;
-	bool isLight = strcmp(request_info->uri,"/rest/items/Light_FF_Bath_Ceiling/");
+	post_data[post_data_len] = 0;	//Add Null-Termination manually
 	
+	ItemUpdateMessage msg;
+	msg.MsgType = ItemMessageTypes::StatusUpdate;
+	msg.ItemType = (ItemTypes::T)itemType;
+	msg.ItemIndex = itemIndex;
+	msg.Property = ItemProperties::Status;
+	msg.Value = ConvertToItemValue(post_data,msg.ItemType);
+	HMIManager::GetInstance()->FireNewMessage(msg);
+		
 	printf(" %s is %s \n ",request_info->uri,post_data);
       }
+      else
+	printf("Unhandled POST-Uri %s  \n ",request_info->uri);
+	
       
       processed = NULL;
     }
@@ -232,19 +304,19 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
     {    
       if(strcmp(request_info->uri, "/rest/sitemaps") == 0) 
       {
-	ajax_sitemaps(conn,request_info,"start.sitemap");      
+	ajax_sitemaps(conn,request_info,"start");      
       }
       else if (strcmp(request_info->uri, "/rest/sitemaps/demo") == 0) 
       {
-	ajax_sitemaps(conn,request_info,"demo.sitemap");      
+	ajax_sitemaps(conn,request_info,"demo");      
       }
       else if (strcmp(request_info->uri, "/rest/sitemaps/demo/demo") == 0) 
       {
-	ajax_sitemaps(conn,request_info,"demo_demo.sitemap");      
+	ajax_sitemaps(conn,request_info,"demo_demo");      
       }
       else if (strcmp(request_info->uri, "/rest/sitemaps/demo/FF_Bath") == 0) 
       {
-	ajax_sitemaps(conn,request_info,"ffbath.sitemap");      
+	ajax_sitemaps(conn,request_info,"ffbath");      
       }     
       else
       {    
@@ -270,14 +342,80 @@ bool HMIManager::InitWebserver()
   return success;  
 }
 
+int HMIManager::GetFilesInDir (string argDir, vector<string> &argFiles)
+{
+    DIR *dp;
+    dirent *dirp;
+    if((dp  = opendir(argDir.c_str())) == NULL)
+    {
+        _Logger->Trace("Error opening " , argDir);
+        return errno;
+    }
+
+    while ((dirp = readdir(dp)) != NULL)
+    {
+        argFiles.push_back(string(dirp->d_name));
+    }
+    closedir(dp);
+    return 0;
+}
+
+bool HMIManager::InitSiteMaps()
+{
+  string dirPath = "greent/sitemaps/";  
+  vector<string> foundFiles;
+  GetFilesInDir(dirPath,foundFiles);
+  vector<string>::iterator iter;
+  for (unsigned int i = 0;i < foundFiles.size();i++) 
+  {
+        vector<string> nameParts;	
+	Tokenize(foundFiles[i], nameParts,".");
+	if(nameParts.size() < 2 || nameParts[nameParts.size()-1] != "sitemap")
+	  continue;
+	
+	FILE *f;
+	char fullPath[200];
+	strcpy(fullPath,dirPath.c_str());	
+	strcat(fullPath, foundFiles[i].c_str());
+	if((f=fopen(fullPath,"r"))==NULL)
+	{
+	  _Logger->Trace("Unable t open sitemap file ",fullPath);
+	  continue;
+	}
+	
+	fseek(f, 0, SEEK_END);
+	long int size = ftell(f);
+	rewind(f); 
+	if(size > 32000)
+	  _Logger->Trace("Content Size does not match the reserved array: ",size);
+	char strContent[32000];
+	int len = fread(strContent,1,size,f);
+	fclose(f);
+	strContent[len] = 0; //Null termination
+	_SiteMaps[nameParts[0]] = strContent;
+  }
+  
+  
+  
+  char filePath[200] = "greent/";
+  
+  
+  
+  
+  
+  
+}
+
 
 bool HMIManager::Start()
 {
+  bool  success = true;
+  
   _Logger->Trace("Starting HMIManager... ");
   _Logger->Trace("Loading SiteMaps... ");
-  _Logger->Trace("Init ItemMappings... ");
- 
-  bool  success = InitWebserver();    
+  success &= InitSiteMaps(); 
+  _Logger->Trace("Init WebServer... ");
+  success &= InitWebserver();    
       
   return success;
 

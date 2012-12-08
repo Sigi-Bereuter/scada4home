@@ -63,7 +63,7 @@ bool PLCManager::SendMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc
   uint8_t valH = (uint8_t)(argValue >> 8);
   
   //Swap High/Low ByteOrder
-  uint8_t tab_int8[] = {msgSrc, msgType,prop,argSrcIdx,valL,valH};
+  uint8_t tab_int8[] = {msgSrc, msgType,prop,argSrcIdx,valH,valL};
   //uint8_t tab_int8[] = {0, 1,2,3,4,5};
   write_reg[0] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 0);
   write_reg[1] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 2);

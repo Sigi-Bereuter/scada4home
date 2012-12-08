@@ -231,13 +231,13 @@ void PLCManager::ReadPLCMessages()
     ret =modbus_read_registers(_ModbusProxy, startAddr + offset, wordCount, read_reg);  
               
     curMsg.MsgType = (ItemMessageTypes::T)(read_reg[0] & 0xFF);
-    curMsg.SourceType = (ItemTypes::T)(read_reg[0] >> 8);
-    curMsg.SourceIndex = read_reg[1] & 0xFF;
+    curMsg.ItemType = (ItemTypes::T)(read_reg[0] >> 8);
+    curMsg.ItemIndex = read_reg[1] & 0xFF;
     curMsg.Property = (ItemProperties::T)(read_reg[1] >> 8);
     curMsg.Value = read_reg[2];
     
     _Logger->Trace("ReadPos " , _MsgReadindex );
-    _Logger->Trace("Received PLC-Message from ",curMsg.SourceType,curMsg.SourceIndex);
+    _Logger->Trace("Received PLC-Message from ",curMsg.ItemType,curMsg.ItemIndex);
    
     if(_EventSubscriber != NULL)
     {

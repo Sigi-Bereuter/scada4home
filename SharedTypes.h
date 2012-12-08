@@ -39,8 +39,8 @@ namespace ItemProperties
 typedef struct
 {
     ItemMessageTypes::T MsgType;
-    ItemTypes::T SourceType;
-    uint8_t SourceIndex;    
+    ItemTypes::T ItemType;
+    uint8_t ItemIndex;    
     ItemProperties::T Property;
     uint16_t Value;    
 } ItemUpdateMessage;

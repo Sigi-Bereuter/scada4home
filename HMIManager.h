@@ -38,6 +38,9 @@ class HMIManager
     static HMIManager *_Instance;
     std::map<string,ScadaItem*> _HmiToScadaMappings;    
     ItemRepository *_ItemRepo;
+    std::map<string,string> _SiteMaps;
+    int GetFilesInDir (string argDir, vector<string> &argFiles);
+    bool InitSiteMaps();
     bool InitWebserver();
     void CloseWebserver();    
 
@@ -48,6 +51,8 @@ class HMIManager
     bool Start();
     void Stop();
     int GetMessagCount();
+    void FireNewMessage(ItemUpdateMessage argMsg);
+    string GetSiteMap(string argSiteMapName);
       
 };
 

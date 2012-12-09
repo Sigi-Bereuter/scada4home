@@ -1,0 +1,9 @@
+{
+    "sitemap": {
+        "name": "home",
+        "link": "http://localhost:8080/rest/sitemaps/home",
+        "homepage": {
+            "link": "http://localhost:8080/rest/sitemaps/home/home"
+        }
+    }
+}

@@ -70,6 +70,7 @@ void ControlManager::CULMessageReceived(ItemUpdateMessage argMsg)
 void ControlManager::HMIMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received HMI_NewMessage Callback");  
+  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
 }
 
 

@@ -24,6 +24,8 @@
 #include <sstream>
 #include <dirent.h> // directory header
 #include <errno.h>
+#include "SharedUtils.h"
+
 
 using namespace std;
 
@@ -129,23 +131,7 @@ static void ajax_sitemaps(struct mg_connection *conn,const struct mg_request_inf
   }
 }
 
-static void Tokenize(const string& str,vector<string>& tokens,const string& delimiters = " ")
-{
-    // Skip delimiters at beginning.
-    string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-    // Find first "non-delimiter".
-    string::size_type pos     = str.find_first_of(delimiters, lastPos);
 
-    while (string::npos != pos || string::npos != lastPos)
-    {
-        // Found a token, add it to the vector.
-        tokens.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiters, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiters, lastPos);
-    }
-}
 
 int16_t ConvertToItemValue(string argStringValue,ItemTypes::T argItemType)
 {
@@ -173,6 +159,8 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
   const struct mg_request_info *request_info = mg_get_request_info(conn);
   void *processed = const_cast<char*>("yes");
   void *emptystring = const_cast<char*>("");
+  
+  
 
   if (event == MG_WEBSOCKET_READY) 
   {    
@@ -241,11 +229,11 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
   else if (event == MG_NEW_REQUEST)
   {
     bool isPost = strcmp(request_info->request_method , "POST") == 0;
+    char* sitemapsURI = "/rest/sitemaps"; 
+    bool isSitemapRequest = strncmp(request_info->uri,sitemapsURI,strlen(sitemapsURI)) == 0;
     
     if(isPost)
-    {
-      printf("MG_POST_DATA\n");
-        
+    {              
       // Read POST data
       string baseUrl = "/rest/items/";
       string postURI =  request_info->uri;
@@ -256,43 +244,29 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 	
 	string itemName = postURI.substr(baseUrl.length());
 	itemName.erase(itemName.length()-1,1);   //Remove trailing '/'	
-	vector<string> nameParts;	
-	Tokenize(itemName, nameParts,".");
 	
-	if(nameParts.size() != 2)
+	ScadaItem* item= NULL;
+	item= HMIManager::GetInstance()->GetItem(itemName);
+	if(item == NULL)
 	{
-	  printf("itemName %s does not follow the num.num Notation\n",itemName.c_str());
+	  printf("Item-Cfg not found in Repository %s ",itemName.c_str());
 	  return processed;
 	}
 		
-	stringstream ssType(nameParts[0]); 
-	int itemType;
-	if( (ssType >> itemType).fail() )
-	{
-	  printf("itemName %s does not follow the num.num Notation\n",itemName.c_str());
-	}
-	stringstream ssIndex;
-	ssIndex << nameParts[1];
-	int itemIndex;
-	if( (ssIndex >> itemIndex).fail())
-	{
-	  printf("itemName %s does not follow the num.num Notation\n",itemName.c_str());
-	}
-		
-	char post_data[2048];
-	int post_data_len;	
-	post_data_len = mg_read(conn, post_data, sizeof(post_data));
-	post_data[post_data_len] = 0;	//Add Null-Termination manually
+	char value_data[2048];
+	int value_data_len;	
+	value_data_len = mg_read(conn, value_data, sizeof(value_data));
+	value_data[value_data_len] = 0;	//Add Null-Termination manually
 	
 	ItemUpdateMessage msg;
 	msg.MsgType = ItemMessageTypes::StatusUpdate;
-	msg.ItemType = (ItemTypes::T)itemType;
-	msg.ItemIndex = itemIndex;
+	msg.ItemType = item->ItemType;
+	msg.ItemIndex = item->Index;
 	msg.Property = ItemProperties::Status;
-	msg.Value = ConvertToItemValue(post_data,msg.ItemType);
+	msg.Value = ConvertToItemValue(value_data,msg.ItemType);
 	HMIManager::GetInstance()->FireNewMessage(msg);
 		
-	printf(" %s is %s \n ",request_info->uri,post_data);
+	printf(" %s is %s \n ",request_info->uri,value_data);
       }
       else
 	printf("Unhandled POST-Uri %s  \n ",request_info->uri);
@@ -300,29 +274,31 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
       
       processed = NULL;
     }
-    else
-    {    
-      if(strcmp(request_info->uri, "/rest/sitemaps") == 0) 
+    else if(isSitemapRequest)  
+    { 
+      char homeUri[128];
+      strcpy (homeUri,sitemapsURI);
+      strcat(homeUri,"/home/home");
+      if(strcmp(request_info->uri, sitemapsURI) == 0) 
       {
 	ajax_sitemaps(conn,request_info,"start");      
-      }
-      else if (strcmp(request_info->uri, "/rest/sitemaps/demo") == 0) 
+      }      
+      else if (strcmp(request_info->uri, homeUri) == 0) 
       {
-	ajax_sitemaps(conn,request_info,"demo");      
+	ajax_sitemaps(conn,request_info,"home_home");      
       }
-      else if (strcmp(request_info->uri, "/rest/sitemaps/demo/demo") == 0) 
+      else   
       {
-	ajax_sitemaps(conn,request_info,"demo_demo");      
+	string strUri = string(request_info->uri);
+	int posLastSlash = strUri.find_last_of('/');
+	string sitemapName = strUri.substr(posLastSlash + 1);
+	ajax_sitemaps(conn,request_info,sitemapName.c_str());      
       }
-      else if (strcmp(request_info->uri, "/rest/sitemaps/demo/FF_Bath") == 0) 
-      {
-	ajax_sitemaps(conn,request_info,"ffbath");      
-      }     
-      else
-      {    
-	processed = NULL;
-      } 
-    }   
+    }
+    else
+    {
+      processed = NULL;
+    }
   } 
   else
   {
@@ -360,6 +336,36 @@ int HMIManager::GetFilesInDir (string argDir, vector<string> &argFiles)
     return 0;
 }
 
+
+string HMIManager::ExpandLinkedPages(string argContent)
+{
+    string result = argContent;
+    int startpos = result.find_first_of('$');
+    string tagPrefix = "linkedpage.";
+    while(startpos >= 0)            
+    {
+      //Nur linkedpages-Tags suchen
+      if(result.compare(startpos+1,tagPrefix.length(),tagPrefix) != 0)
+	continue;
+      
+      int endpos = result.find_first_of('$',startpos+1);
+      if(result[startpos-1] == '\"' && result[endpos+1] == '\"')
+      {
+	startpos--;  //tags sind als string im JSON - Anführungszeichen wegtrimmen
+        endpos++;
+      }
+      int len = endpos - startpos+1;
+      string tagName = result.substr(startpos, len);
+      string pageName = tagName;
+      pageName.erase(0,2+tagPrefix.length());
+      pageName.erase(pageName.length()-2,2);
+      result = result.erase(startpos,tagName.length());
+      result = result.insert(startpos, ExpandLinkedPages(_SiteMaps[pageName]));
+      startpos = result.find_first_of('$', 0);
+    }            
+    return result;  
+}
+
 bool HMIManager::InitSiteMaps()
 {
   string dirPath = "greent/sitemaps/";  
@@ -369,7 +375,7 @@ bool HMIManager::InitSiteMaps()
   for (unsigned int i = 0;i < foundFiles.size();i++) 
   {
         vector<string> nameParts;	
-	Tokenize(foundFiles[i], nameParts,".");
+	SharedUtils::Tokenize(foundFiles[i], nameParts,".");
 	if(nameParts.size() < 2 || nameParts[nameParts.size()-1] != "sitemap")
 	  continue;
 	
@@ -391,19 +397,20 @@ bool HMIManager::InitSiteMaps()
 	char strContent[32000];
 	int len = fread(strContent,1,size,f);
 	fclose(f);
-	strContent[len] = 0; //Null termination
+	strContent[len] = 0; //Null termination	
 	_SiteMaps[nameParts[0]] = strContent;
+  }   
+  
+  for(map<string, string>::iterator iter=_SiteMaps.begin(); iter!=_SiteMaps.end(); ++iter)
+  {
+      _SiteMaps[(*iter).first] = ExpandLinkedPages((*iter).second);
   }
   
-  
-  
-  char filePath[200] = "greent/";
-  
-  
-  
-  
-  
-  
+}
+
+ScadaItem* HMIManager::GetItem(string argItemName)
+{
+  return _ItemRepo->GetItem(argItemName);
 }
 
 

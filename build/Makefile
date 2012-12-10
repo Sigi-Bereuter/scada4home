@@ -108,293 +108,185 @@ scada4home/fast:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/build
 .PHONY : scada4home/fast
 
-CULManager.o: CULManager.cpp.o
+# target to build an object file
+CULManager.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CULManager.o
 .PHONY : CULManager.o
 
-# target to build an object file
-CULManager.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CULManager.cpp.o
-.PHONY : CULManager.cpp.o
-
-CULManager.i: CULManager.cpp.i
+# target to preprocess a source file
+CULManager.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CULManager.i
 .PHONY : CULManager.i
 
-# target to preprocess a source file
-CULManager.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CULManager.cpp.i
-.PHONY : CULManager.cpp.i
-
-CULManager.s: CULManager.cpp.s
+# target to generate assembly for a file
+CULManager.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CULManager.s
 .PHONY : CULManager.s
 
-# target to generate assembly for a file
-CULManager.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CULManager.cpp.s
-.PHONY : CULManager.cpp.s
-
-CUNOEmulator.o: CUNOEmulator.cpp.o
+# target to build an object file
+CUNOEmulator.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CUNOEmulator.o
 .PHONY : CUNOEmulator.o
 
-# target to build an object file
-CUNOEmulator.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CUNOEmulator.cpp.o
-.PHONY : CUNOEmulator.cpp.o
-
-CUNOEmulator.i: CUNOEmulator.cpp.i
+# target to preprocess a source file
+CUNOEmulator.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CUNOEmulator.i
 .PHONY : CUNOEmulator.i
 
-# target to preprocess a source file
-CUNOEmulator.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CUNOEmulator.cpp.i
-.PHONY : CUNOEmulator.cpp.i
-
-CUNOEmulator.s: CUNOEmulator.cpp.s
+# target to generate assembly for a file
+CUNOEmulator.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CUNOEmulator.s
 .PHONY : CUNOEmulator.s
 
-# target to generate assembly for a file
-CUNOEmulator.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/CUNOEmulator.cpp.s
-.PHONY : CUNOEmulator.cpp.s
-
-ControlManager.o: ControlManager.cpp.o
+# target to build an object file
+ControlManager.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.o
 .PHONY : ControlManager.o
 
-# target to build an object file
-ControlManager.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.cpp.o
-.PHONY : ControlManager.cpp.o
-
-ControlManager.i: ControlManager.cpp.i
+# target to preprocess a source file
+ControlManager.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.i
 .PHONY : ControlManager.i
 
-# target to preprocess a source file
-ControlManager.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.cpp.i
-.PHONY : ControlManager.cpp.i
-
-ControlManager.s: ControlManager.cpp.s
+# target to generate assembly for a file
+ControlManager.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.s
 .PHONY : ControlManager.s
 
-# target to generate assembly for a file
-ControlManager.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ControlManager.cpp.s
-.PHONY : ControlManager.cpp.s
-
-HMIManager.o: HMIManager.cpp.o
+# target to build an object file
+HMIManager.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.o
 .PHONY : HMIManager.o
 
-# target to build an object file
-HMIManager.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.cpp.o
-.PHONY : HMIManager.cpp.o
-
-HMIManager.i: HMIManager.cpp.i
+# target to preprocess a source file
+HMIManager.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.i
 .PHONY : HMIManager.i
 
-# target to preprocess a source file
-HMIManager.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.cpp.i
-.PHONY : HMIManager.cpp.i
-
-HMIManager.s: HMIManager.cpp.s
+# target to generate assembly for a file
+HMIManager.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.s
 .PHONY : HMIManager.s
 
-# target to generate assembly for a file
-HMIManager.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/HMIManager.cpp.s
-.PHONY : HMIManager.cpp.s
-
-IntertechnoFSM.o: IntertechnoFSM.cpp.o
+# target to build an object file
+IntertechnoFSM.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.o
 .PHONY : IntertechnoFSM.o
 
-# target to build an object file
-IntertechnoFSM.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o
-.PHONY : IntertechnoFSM.cpp.o
-
-IntertechnoFSM.i: IntertechnoFSM.cpp.i
+# target to preprocess a source file
+IntertechnoFSM.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.i
 .PHONY : IntertechnoFSM.i
 
-# target to preprocess a source file
-IntertechnoFSM.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.i
-.PHONY : IntertechnoFSM.cpp.i
-
-IntertechnoFSM.s: IntertechnoFSM.cpp.s
+# target to generate assembly for a file
+IntertechnoFSM.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.s
 .PHONY : IntertechnoFSM.s
 
-# target to generate assembly for a file
-IntertechnoFSM.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.s
-.PHONY : IntertechnoFSM.cpp.s
-
-ItemRepository.o: ItemRepository.cpp.o
+# target to build an object file
+ItemRepository.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.o
 .PHONY : ItemRepository.o
 
-# target to build an object file
-ItemRepository.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.cpp.o
-.PHONY : ItemRepository.cpp.o
-
-ItemRepository.i: ItemRepository.cpp.i
+# target to preprocess a source file
+ItemRepository.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.i
 .PHONY : ItemRepository.i
 
-# target to preprocess a source file
-ItemRepository.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.cpp.i
-.PHONY : ItemRepository.cpp.i
-
-ItemRepository.s: ItemRepository.cpp.s
+# target to generate assembly for a file
+ItemRepository.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.s
 .PHONY : ItemRepository.s
 
-# target to generate assembly for a file
-ItemRepository.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ItemRepository.cpp.s
-.PHONY : ItemRepository.cpp.s
-
-LogTracer.o: LogTracer.cpp.o
+# target to build an object file
+LogTracer.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/LogTracer.o
 .PHONY : LogTracer.o
 
-# target to build an object file
-LogTracer.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/LogTracer.cpp.o
-.PHONY : LogTracer.cpp.o
-
-LogTracer.i: LogTracer.cpp.i
+# target to preprocess a source file
+LogTracer.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/LogTracer.i
 .PHONY : LogTracer.i
 
-# target to preprocess a source file
-LogTracer.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/LogTracer.cpp.i
-.PHONY : LogTracer.cpp.i
-
-LogTracer.s: LogTracer.cpp.s
+# target to generate assembly for a file
+LogTracer.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/LogTracer.s
 .PHONY : LogTracer.s
 
-# target to generate assembly for a file
-LogTracer.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/LogTracer.cpp.s
-.PHONY : LogTracer.cpp.s
-
-PLCManager.o: PLCManager.cpp.o
+# target to build an object file
+PLCManager.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.o
 .PHONY : PLCManager.o
 
-# target to build an object file
-PLCManager.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.cpp.o
-.PHONY : PLCManager.cpp.o
-
-PLCManager.i: PLCManager.cpp.i
+# target to preprocess a source file
+PLCManager.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.i
 .PHONY : PLCManager.i
 
-# target to preprocess a source file
-PLCManager.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.cpp.i
-.PHONY : PLCManager.cpp.i
-
-PLCManager.s: PLCManager.cpp.s
+# target to generate assembly for a file
+PLCManager.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.s
 .PHONY : PLCManager.s
 
-# target to generate assembly for a file
-PLCManager.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/PLCManager.cpp.s
-.PHONY : PLCManager.cpp.s
-
-ScadaItem.o: ScadaItem.cpp.o
+# target to build an object file
+ScadaItem.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.o
 .PHONY : ScadaItem.o
 
-# target to build an object file
-ScadaItem.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.cpp.o
-.PHONY : ScadaItem.cpp.o
-
-ScadaItem.i: ScadaItem.cpp.i
+# target to preprocess a source file
+ScadaItem.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.i
 .PHONY : ScadaItem.i
 
-# target to preprocess a source file
-ScadaItem.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.cpp.i
-.PHONY : ScadaItem.cpp.i
-
-ScadaItem.s: ScadaItem.cpp.s
+# target to generate assembly for a file
+ScadaItem.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.s
 .PHONY : ScadaItem.s
 
-# target to generate assembly for a file
-ScadaItem.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.cpp.s
-.PHONY : ScadaItem.cpp.s
-
-TestMan.o: TestMan.cpp.o
-.PHONY : TestMan.o
-
 # target to build an object file
-TestMan.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/TestMan.cpp.o
-.PHONY : TestMan.cpp.o
-
-TestMan.i: TestMan.cpp.i
-.PHONY : TestMan.i
+SharedUtils.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SharedUtils.o
+.PHONY : SharedUtils.o
 
 # target to preprocess a source file
-TestMan.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/TestMan.cpp.i
-.PHONY : TestMan.cpp.i
-
-TestMan.s: TestMan.cpp.s
-.PHONY : TestMan.s
+SharedUtils.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SharedUtils.i
+.PHONY : SharedUtils.i
 
 # target to generate assembly for a file
-TestMan.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/TestMan.cpp.s
-.PHONY : TestMan.cpp.s
+SharedUtils.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SharedUtils.s
+.PHONY : SharedUtils.s
 
-main.o: main.cpp.o
+# target to build an object file
+main.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.o
 .PHONY : main.o
 
-# target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
+# target to preprocess a source file
+main.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.i
 .PHONY : main.i
 
-# target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
+# target to generate assembly for a file
+main.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.s
 .PHONY : main.s
 
-# target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/main.cpp.s
-.PHONY : main.cpp.s
-
-mongoose.o: mongoose.cpp.o
+# target to build an object file
+mongoose.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.o
 .PHONY : mongoose.o
 
-# target to build an object file
-mongoose.cpp.o:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.cpp.o
-.PHONY : mongoose.cpp.o
-
-mongoose.i: mongoose.cpp.i
+# target to preprocess a source file
+mongoose.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.i
 .PHONY : mongoose.i
 
-# target to preprocess a source file
-mongoose.cpp.i:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.cpp.i
-.PHONY : mongoose.cpp.i
-
-mongoose.s: mongoose.cpp.s
-.PHONY : mongoose.s
-
 # target to generate assembly for a file
-mongoose.cpp.s:
-	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.cpp.s
-.PHONY : mongoose.cpp.s
+mongoose.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/mongoose.s
+.PHONY : mongoose.s
 
 # Help Target
 help:
@@ -432,9 +324,9 @@ help:
 	@echo "... ScadaItem.o"
 	@echo "... ScadaItem.i"
 	@echo "... ScadaItem.s"
-	@echo "... TestMan.o"
-	@echo "... TestMan.i"
-	@echo "... TestMan.s"
+	@echo "... SharedUtils.o"
+	@echo "... SharedUtils.i"
+	@echo "... SharedUtils.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -4,18 +4,18 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/besi/projects/Scada4Home/CULManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/CULManager.cpp.o"
-  "/home/besi/projects/Scada4Home/CUNOEmulator.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/CUNOEmulator.cpp.o"
-  "/home/besi/projects/Scada4Home/ControlManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/ControlManager.cpp.o"
-  "/home/besi/projects/Scada4Home/HMIManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/HMIManager.cpp.o"
-  "/home/besi/projects/Scada4Home/IntertechnoFSM.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/IntertechnoFSM.cpp.o"
-  "/home/besi/projects/Scada4Home/ItemRepository.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/ItemRepository.cpp.o"
-  "/home/besi/projects/Scada4Home/LogTracer.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/LogTracer.cpp.o"
-  "/home/besi/projects/Scada4Home/PLCManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/PLCManager.cpp.o"
-  "/home/besi/projects/Scada4Home/ScadaItem.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/ScadaItem.cpp.o"
-  "/home/besi/projects/Scada4Home/TestMan.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/TestMan.cpp.o"
-  "/home/besi/projects/Scada4Home/main.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/main.cpp.o"
-  "/home/besi/projects/Scada4Home/mongoose.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/mongoose.cpp.o"
+  "/home/besi/projects/Scada4Home/CULManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/CULManager.o"
+  "/home/besi/projects/Scada4Home/CUNOEmulator.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/CUNOEmulator.o"
+  "/home/besi/projects/Scada4Home/ControlManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/ControlManager.o"
+  "/home/besi/projects/Scada4Home/HMIManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/HMIManager.o"
+  "/home/besi/projects/Scada4Home/IntertechnoFSM.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/IntertechnoFSM.o"
+  "/home/besi/projects/Scada4Home/ItemRepository.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/ItemRepository.o"
+  "/home/besi/projects/Scada4Home/LogTracer.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/LogTracer.o"
+  "/home/besi/projects/Scada4Home/PLCManager.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/PLCManager.o"
+  "/home/besi/projects/Scada4Home/ScadaItem.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/ScadaItem.o"
+  "/home/besi/projects/Scada4Home/SharedUtils.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/SharedUtils.o"
+  "/home/besi/projects/Scada4Home/main.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/main.o"
+  "/home/besi/projects/Scada4Home/mongoose.cpp" "/home/besi/projects/Scada4Home/build/CMakeFiles/scada4home.dir/mongoose.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

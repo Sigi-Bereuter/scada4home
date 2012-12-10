@@ -23,6 +23,8 @@ dirent.h
 -
 errno.h
 -
+SharedUtils.h
+/home/besi/projects/Scada4Home/SharedUtils.h
 
 /home/besi/projects/Scada4Home/HMIManager.h
 LogTracer.h
@@ -47,6 +49,10 @@ ScadaItem.h
 /home/besi/projects/Scada4Home/ScadaItem.h
 SharedTypes.h
 /home/besi/projects/Scada4Home/SharedTypes.h
+iostream
+-
+LogTracer.h
+/home/besi/projects/Scada4Home/LogTracer.h
 
 /home/besi/projects/Scada4Home/LogTracer.h
 iostream
@@ -60,6 +66,12 @@ string
 
 /home/besi/projects/Scada4Home/SharedTypes.h
 stdint.h
+-
+
+/home/besi/projects/Scada4Home/SharedUtils.h
+iostream
+-
+vector
 -
 
 /home/besi/projects/Scada4Home/mongoose.h

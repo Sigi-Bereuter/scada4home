@@ -29,7 +29,7 @@ namespace ItemMessageTypes
 }
 namespace ItemTypes
 {
-  enum T : uint8_t {Jalousie=1,Rollo=2,Switch=3,Dummy=99};
+  enum T : uint8_t {Jalousie=1,Rollo=2,Markise=3,Switch=4,Dummy=99};
 }
 namespace ItemProperties
 {

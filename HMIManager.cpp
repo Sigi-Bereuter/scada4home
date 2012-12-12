@@ -146,6 +146,10 @@ int16_t ConvertToItemValue(string argStringValue,ItemTypes::T argItemType)
     return 2;
   else if(argStringValue == "STOP")
     return 0;
+  else if(argItemType == ItemTypes::Switch)
+  {
+    result = atoi(argStringValue.c_str());
+  }
   else
   {
     printf("ItemValue %s undefined\r\n",argStringValue.c_str());    
@@ -249,7 +253,7 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 	item= HMIManager::GetInstance()->GetItem(itemName);
 	if(item == NULL)
 	{
-	  printf("Item-Cfg not found in Repository %s ",itemName.c_str());
+	  printf("Item-Cfg not found in Repository %s \n",itemName.c_str());
 	  return processed;
 	}
 		

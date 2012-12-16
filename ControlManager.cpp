@@ -59,6 +59,15 @@ void ControlManager::Stop()
 void ControlManager::PLCMessageReceived(ItemUpdateMessage argMsg)
 {
   _Logger->Trace("Received PLC_NewMessage Callback");
+  if(argMsg.MsgType == ItemMessageTypes::StatusUpdate)
+  {
+    ScadaItem *item = _ItemRepo->GetItem(argMsg.ItemType,argMsg.ItemIndex);
+    if(item != NULL)
+      item->Value = argMsg.Value;
+    
+    _HMI->UpdateItemView(argMsg);
+    
+  }
 }
 
 void ControlManager::CULMessageReceived(ItemUpdateMessage argMsg)

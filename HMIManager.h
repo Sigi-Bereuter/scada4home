@@ -39,7 +39,10 @@ class HMIManager
     std::map<string,ScadaItem*> _HmiToScadaMappings;    
     ItemRepository *_ItemRepo;
     std::map<string,string> _SiteMaps;
+    mg_connection *_ClientConnection;
     string ExpandLinkedPages(string argContent);
+    string GetLabelForItemValue(int16_t argItemValue,ItemProperties::T argProperty,ItemTypes::T  argItemType);
+    string GetIconForItemValue(int16_t argItemValue,ItemProperties::T argProperty,ItemTypes::T  argItemType);
     int GetFilesInDir (string argDir, vector<string> &argFiles);
     bool InitSiteMaps();
     bool InitWebserver();
@@ -52,9 +55,11 @@ class HMIManager
     bool Start();
     void Stop();
     int GetMessagCount();
-    void FireNewMessage(ItemUpdateMessage argMsg);
+    void NotifyUserMessage(ItemUpdateMessage argMsg);
+    void UpdateItemView(ItemUpdateMessage argMsg);
     string GetSiteMap(string argSiteMapName);
     ScadaItem* GetItem(string argItemName);
+    void SetWebSocketClient(mg_connection* argConnection);
       
 };
 

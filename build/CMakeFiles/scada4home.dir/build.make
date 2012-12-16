@@ -353,6 +353,7 @@ scada4home: CMakeFiles/scada4home.dir/PLCManager.o
 scada4home: CMakeFiles/scada4home.dir/main.o
 scada4home: CMakeFiles/scada4home.dir/mongoose.o
 scada4home: /usr/local/lib/libmodbus.so
+scada4home: /usr/lib/i386-linux-gnu/librt.so
 scada4home: /usr/lib/i386-linux-gnu/libpthread.so
 scada4home: /usr/lib/i386-linux-gnu/libdl.so
 scada4home: CMakeFiles/scada4home.dir/build.make

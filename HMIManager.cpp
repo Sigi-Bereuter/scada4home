@@ -25,6 +25,8 @@
 #include <dirent.h> // directory header
 #include <errno.h>
 #include "SharedUtils.h"
+#include <semaphore.h>
+#include <time.h>
 
 
 using namespace std;
@@ -35,7 +37,41 @@ static const char *ajax_reply_start =
   "Content-Type: application/x-javascript\r\n"
   "\r\n";
   
+sem_t ItemUpdateEvent;
 
+static void InitItemUpdateEvent()
+{
+  //Wait for HMI-Events, and send result if one happens
+  if (sem_init(&ItemUpdateEvent, 0, 0) == -1)
+  {
+    printf("sem_init failed!");    
+  }
+}
+
+static void SetItemUpdateEvent()
+{
+  if (sem_post(&ItemUpdateEvent) == -1)
+  {
+    printf("sem_post failed\r\n");
+  }
+  else
+    printf("SetItemUpdateEvent\r\n");
+}
+
+static void WaitItemUpdateEvent()
+{
+  struct timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  ts.tv_sec += 60;
+  int s=0;
+  printf("LongPolling request waiting for ItemUpdateEvent..." );  
+  s = sem_timedwait(&ItemUpdateEvent, &ts);
+  
+  printf("Waiting completed, returning LongPolling request\r\n");
+  
+  //while ((s = sem_timedwait(&ItemUpdateEvent, &ts)) == -1 && errno == EINTR)
+  //  continue;       /* Restart if interrupted by handler */
+}
 
 
 HMIManager::HMIManager(ItemRepository *argItemRepo,IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger)
@@ -59,10 +95,115 @@ int HMIManager::GetMessagCount()
   return 999;
 }
 
-void HMIManager::FireNewMessage(ItemUpdateMessage argMsg)
+string HMIManager::GetLabelForItemValue(int16_t argItemValue,ItemProperties::T argProperty,ItemTypes::T  argItemType)
 {
+  if(argItemType == ItemTypes::Rollo)
+  {
+    if(argProperty == ItemProperties::Status)
+    {
+      return "";
+      //stringstream ssLabelText;
+      //ssLabelText << "Rolladen " <<  argItemValue;
+      //return ssLabelText.str();
+    }    
+  }
+  if(argItemType == ItemTypes::Jalousie)
+  {
+    if(argProperty == ItemProperties::Status)
+    {
+      return "";
+      //stringstream ssLabelText;
+      //ssLabelText << "Jalousie " << argItemValue ;
+      //return ssLabelText.str();
+    }    
+  } 
+  
+  return "";
+}
+
+string HMIManager::GetIconForItemValue(int16_t argItemValue,ItemProperties::T argProperty,ItemTypes::T  argItemType)
+{
+  if(argItemType == ItemTypes::Rollo || argItemType == ItemTypes::Jalousie)
+  {
+    if(argProperty == ItemProperties::Position)
+    {
+      stringstream ssIconname;
+      int percentVal = 100*argItemValue/255;
+      int16_t val = 10*(percentVal/10); //Maxwert in PLC ist 255 Ausgabe ist in Prozent !
+      ssIconname << "rollershutter-" << val;
+      return ssIconname.str();
+    }    
+  } 
+  
+  return "";
+}
+
+void HMIManager::NotifyUserMessage(ItemUpdateMessage argMsg)
+{
+  //Let ControlManager dispatch messages resulting from User-Actions
   if(_EventSubscriber != NULL)
     _EventSubscriber->HMIMessageReceived(argMsg);
+}
+
+void HMIManager::UpdateItemView(ItemUpdateMessage argMsg)
+{
+  ScadaItem* item = _ItemRepo->GetItem(argMsg.ItemType,argMsg.ItemIndex);  
+  if(item == NULL)
+  {
+    _Logger->Trace("Item not in Repository: ",argMsg.ItemType,argMsg.ItemIndex);
+    return;   
+  }
+    
+  stringstream ssWidgetId;
+  ssWidgetId << "\"widgetId\":\"" << item->WidgetId << "\"";
+  string strLabel = "\"label\":";
+  string strIcon = "\"icon\":";   
+        
+  int widgetIdPos = _SiteMaps[item->SiteMap].find(ssWidgetId.str());  
+  if(widgetIdPos == string::npos)
+  {
+     _Logger->Trace("WidgetId not found in SiteMap for itemIndex ",argMsg.ItemIndex);
+     return;
+  }
+  int labelStartPos = _SiteMaps[item->SiteMap].find(strLabel,widgetIdPos);
+  if(labelStartPos == string::npos)
+  {
+     _Logger->Trace("No label not found in SiteMap for widget ",ssWidgetId.str());
+     return;
+  }
+  int iconStartPos = _SiteMaps[item->SiteMap].find(strIcon,labelStartPos);
+  if(iconStartPos == string::npos)
+  {
+     _Logger->Trace("No icon not found in SiteMap for widget ",ssWidgetId.str());
+     return;
+  }
+  
+  labelStartPos += strLabel.length()+1;
+  iconStartPos += strIcon.length()+1;
+  
+  int labelEndPos = _SiteMaps[item->SiteMap].find_first_of(',',labelStartPos) -1;
+  int iconEndPos = _SiteMaps[item->SiteMap].find_first_of(',',iconStartPos) -1;
+  
+  int labelLength = labelEndPos-labelStartPos;
+  int iconLength = iconEndPos-iconStartPos;
+  
+  string strNewIcon = GetIconForItemValue(argMsg.Value,argMsg.Property,argMsg.ItemType);
+  if(strNewIcon != "")
+    _SiteMaps[item->SiteMap].replace(iconStartPos,iconLength,strNewIcon); 
+  
+  string strNewLabel = GetLabelForItemValue(argMsg.Value,argMsg.Property,argMsg.ItemType);
+  if(strNewLabel != "")
+    _SiteMaps[item->SiteMap].replace(labelStartPos,labelLength,strNewLabel); 
+  
+  //string after = _SiteMaps[item->SiteMap];
+  //printf("New SiteMap: %s  \n",after.c_str());
+    
+  //unsigned char sendBuff[512];
+  //int msgLen = 255; 
+  //mg_write(_ClientConnection,sendBuff,msgLen+2);
+  
+    SetItemUpdateEvent();
+  
 }
 
 string HMIManager::GetSiteMap(string argSiteMapName)
@@ -125,11 +266,18 @@ static void ajax_sitemaps(struct mg_connection *conn,const struct mg_request_inf
   const char *strContent = siteMap.c_str();
   mg_printf(conn, "%s", strContent);
   
+  /*
+  mg_printf(conn, "HTTP/1.1 %d %s\r\n"
+              "Content-Length: %d\r\n"
+              "Connection: %s\r\n\r\n", status, reason, len,
+              suggest_connection_header(conn));
+    conn->num_bytes_sent += mg_printf(conn, "%s", buf);*/
 
   if (is_jsonp) {
     mg_printf(conn, "%s", ")");
   }
 }
+
 
 
 
@@ -158,32 +306,12 @@ int16_t ConvertToItemValue(string argStringValue,ItemTypes::T argItemType)
  
 }
 
-static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
-{
-  const struct mg_request_info *request_info = mg_get_request_info(conn);
-  void *processed = const_cast<char*>("yes");
-  void *emptystring = const_cast<char*>("");
-  
-  
 
-  if (event == MG_WEBSOCKET_READY) 
-  {    
-    printf("MG_WEBSOCKET_READY\r\n");
-    unsigned char buf[40];
-    buf[0] = 0x81;
-    buf[1] = snprintf((char *) buf + 2, sizeof(buf) - 2, "%s", "server ready");
-    mg_write(conn, buf, 2 + buf[1]);
-    return emptystring;  // MG_WEBSOCKET_READY return value is ignored
-  } 
-  else if (event == MG_WEBSOCKET_CONNECT) 
-  {   
-    printf("MG_WEBSOCKET_CONNECT\r\n");    
-    return NULL;  
-  } 
-  else if (event == MG_WEBSOCKET_MESSAGE)
-  {
-    printf("MG_WEBSOCKET_MESSAGE\r\n");
-    unsigned char buf[200];
+
+static void* HandleWebSocketMessage(mg_connection *conn)
+{
+  void *emptystring = const_cast<char*>("");
+  unsigned char buf[200];
     unsigned char reply[200];
     int n, i, mask_len;
     int exor, msg_len, len;
@@ -225,17 +353,63 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 
     // Echo the message back to the client
     mg_write(conn, reply, 2 + msg_len);
+    char msgBuf[200];
+    for(int n=0;n<msg_len;n++)
+      msgBuf[n] = reply[n];
+            
+    string str(msgBuf);
+    printf("WebsocketMessage = %s \n",str.c_str());
 
     // Return non-NULL means stoping websocket conversation.
     // Close the conversation if client has sent us "exit" string.
     return memcmp(reply + 2, "exit", 4) == 0 ? emptystring : NULL;
+}
+
+static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
+{
+  const struct mg_request_info *request_info = mg_get_request_info(conn);
+  void *processed = const_cast<char*>("yes");
+  void *emptystring = const_cast<char*>("");
+    
+
+  if (event == MG_WEBSOCKET_READY) 
+  {    
+    printf("MG_WEBSOCKET_READY\r\n");
+    unsigned char buf[40];
+    buf[0] = 0x81;
+    buf[1] = snprintf((char *) buf + 2, sizeof(buf) - 2, "%s", "server ready");
+    mg_write(conn, buf, 2 + buf[1]);
+    return emptystring;  // MG_WEBSOCKET_READY return value is ignored
+  } 
+  else if (event == MG_WEBSOCKET_CONNECT) 
+  {   
+    printf("MG_WEBSOCKET_CONNECT\r\n");    
+    HMIManager::GetInstance()->SetWebSocketClient(conn);
+    return NULL;  
+  } 
+  else if (event == MG_WEBSOCKET_MESSAGE)
+  {
+    printf("MG_WEBSOCKET_MESSAGE\r\n");
+    return HandleWebSocketMessage(conn);
   }
   else if (event == MG_NEW_REQUEST)
   {
     bool isPost = strcmp(request_info->request_method , "POST") == 0;
     char* sitemapsURI = "/rest/sitemaps"; 
     bool isSitemapRequest = strncmp(request_info->uri,sitemapsURI,strlen(sitemapsURI)) == 0;
+    bool isLongPolling = false;
     
+    //Search for Headers like "X-Atmosphere-Transport:long-polling";    
+    const char* xHeader = mg_get_header(conn, "X-Atmosphere-Transport");    
+    if (xHeader != NULL) 
+    { 
+      if(strcmp(xHeader,"long-polling") == 0)
+      {	
+	isLongPolling = true;	
+	WaitItemUpdateEvent();	
+      }
+    }
+     
     if(isPost)
     {              
       // Read POST data
@@ -268,9 +442,10 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 	msg.ItemIndex = item->Index;
 	msg.Property = ItemProperties::Status;
 	msg.Value = ConvertToItemValue(value_data,msg.ItemType);
-	HMIManager::GetInstance()->FireNewMessage(msg);
+	HMIManager::GetInstance()->NotifyUserMessage(msg);
 		
 	printf(" %s is %s \n ",request_info->uri,value_data);
+	return processed;
       }
       else
 	printf("Unhandled POST-Uri %s  \n ",request_info->uri);
@@ -317,10 +492,17 @@ bool HMIManager::InitWebserver()
 {
   bool success = true;  
   _Logger->Trace("InitWebserver...");    
+  InitItemUpdateEvent();
   const char *options[] = {"document_root", "greent","listening_ports", "8081","num_threads", "5",NULL};
   _Webserver = mg_start(&WebServerCallback, NULL, options);    
   return success;  
 }
+
+void HMIManager::SetWebSocketClient(mg_connection* argConnection)
+{
+  _ClientConnection = argConnection;
+}
+
 
 int HMIManager::GetFilesInDir (string argDir, vector<string> &argFiles)
 {

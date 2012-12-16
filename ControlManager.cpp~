@@ -22,7 +22,7 @@
 ControlManager::ControlManager()
 {
   _Logger = new LogTracer();
-  _ItemRepo = new ItemRepository();
+  _ItemRepo = new ItemRepository(_Logger);
   _PLC = new PLCManager(this,_Logger);
   _CUL = new CULManager(this,_Logger); 
   _HMI = new HMIManager(_ItemRepo,this,_Logger);

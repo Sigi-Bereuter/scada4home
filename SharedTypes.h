@@ -33,7 +33,7 @@ namespace ItemTypes
 }
 namespace ItemProperties
 {
-  enum T  : uint8_t {Status=1,Value=2};
+  enum T  : uint8_t {Status=1,Position=2,Value=3};
 }
 
 typedef struct

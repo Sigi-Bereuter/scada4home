@@ -25,6 +25,10 @@ errno.h
 -
 SharedUtils.h
 /home/besi/projects/Scada4Home/SharedUtils.h
+semaphore.h
+-
+time.h
+-
 
 /home/besi/projects/Scada4Home/HMIManager.h
 LogTracer.h

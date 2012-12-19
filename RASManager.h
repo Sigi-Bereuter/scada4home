@@ -17,39 +17,38 @@
 */
 
 
-#ifndef CONTROLMANAGER_H
-#define CONTROLMANAGER_H
+#ifndef RASMANAGER_H
+#define RASMANAGER_H
 
+#include "Pop3Client.h"
+#include "SMTPClient.h"
 #include "LogTracer.h"
-#include "PLCManager.h"
-#include "CULManager.h"
-#include "HMIManager.h"
-#include "RASManager.h"
 #include "SharedTypes.h"
-#include <termios.h>
 
-
-
-class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventSubscriber
+class RASManager
 {
   private:
+    Pop3Client *_POP3Client;  
+    SMTPClient *_SMTPClient;
+    timeval _LastPop3Fetch;
     LogTracer *_Logger;
-    PLCManager *_PLC;
-    CULManager *_CUL;
-    HMIManager *_HMI;
-    RASManager * _RAS;
-    ItemRepository *_ItemRepo;
-    void PLCMessageReceived(ItemUpdateMessage argMsg);
-    void CULMessageReceived(ItemUpdateMessage argMsg);
-    void HMIMessageReceived(ItemUpdateMessage argMsg);
-    void RASMessageReceived(ItemUpdateMessage argMsg);
-    
-
+    pthread_t _ProcessingThread; 
+    IPLCEventSubscriber *_EventSubscriber;
+    void FetchPop3Mails();
+    void SendMail(string argReceiverEmail,string argSubject,string argBodyText);
+    void AnalyzeMail(string argMailText);
+    static void *LaunchMemberFunction(void *obj)
+     {
+	RASManager *targetObj = reinterpret_cast<RASManager *>(obj);
+	return targetObj->ProcessingLoop();
+     }
+     
   public:
-    ControlManager();
-    virtual ~ControlManager();
     bool Start();
     void Stop();
+    void * ProcessingLoop();
+    RASManager(IPLCEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+    virtual ~RASManager();
 };
 
-#endif // CONTROLMANAGER_H
+#endif // RASMANAGER_H

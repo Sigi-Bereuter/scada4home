@@ -64,13 +64,12 @@ static void WaitItemUpdateEvent()
   clock_gettime(CLOCK_REALTIME, &ts);
   ts.tv_sec += 60;
   int s=0;
-  printf("LongPolling request waiting for ItemUpdateEvent..." );  
-  s = sem_timedwait(&ItemUpdateEvent, &ts);
+  printf("LongPolling request waiting for ItemUpdateEvent...\n" );  
   
+  while ((s = sem_timedwait(&ItemUpdateEvent, &ts)) == -1 && errno == EINTR)
+    continue;       /* Restart if interrupted by handler */
+    
   printf("Waiting completed, returning LongPolling request\r\n");
-  
-  //while ((s = sem_timedwait(&ItemUpdateEvent, &ts)) == -1 && errno == EINTR)
-  //  continue;       /* Restart if interrupted by handler */
 }
 
 

@@ -229,6 +229,51 @@ PLCManager.s:
 .PHONY : PLCManager.s
 
 # target to build an object file
+Pop3Client.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/Pop3Client.o
+.PHONY : Pop3Client.o
+
+# target to preprocess a source file
+Pop3Client.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/Pop3Client.i
+.PHONY : Pop3Client.i
+
+# target to generate assembly for a file
+Pop3Client.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/Pop3Client.s
+.PHONY : Pop3Client.s
+
+# target to build an object file
+RASManager.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/RASManager.o
+.PHONY : RASManager.o
+
+# target to preprocess a source file
+RASManager.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/RASManager.i
+.PHONY : RASManager.i
+
+# target to generate assembly for a file
+RASManager.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/RASManager.s
+.PHONY : RASManager.s
+
+# target to build an object file
+SMTPClient.o:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SMTPClient.o
+.PHONY : SMTPClient.o
+
+# target to preprocess a source file
+SMTPClient.i:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SMTPClient.i
+.PHONY : SMTPClient.i
+
+# target to generate assembly for a file
+SMTPClient.s:
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SMTPClient.s
+.PHONY : SMTPClient.s
+
+# target to build an object file
 ScadaItem.o:
 	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/ScadaItem.o
 .PHONY : ScadaItem.o
@@ -321,6 +366,15 @@ help:
 	@echo "... PLCManager.o"
 	@echo "... PLCManager.i"
 	@echo "... PLCManager.s"
+	@echo "... Pop3Client.o"
+	@echo "... Pop3Client.i"
+	@echo "... Pop3Client.s"
+	@echo "... RASManager.o"
+	@echo "... RASManager.i"
+	@echo "... RASManager.s"
+	@echo "... SMTPClient.o"
+	@echo "... SMTPClient.i"
+	@echo "... SMTPClient.s"
 	@echo "... ScadaItem.o"
 	@echo "... ScadaItem.i"
 	@echo "... ScadaItem.s"

@@ -18,6 +18,9 @@ CMakeFiles/scada4home.dir/ControlManager.o: ../IntertechnoFSM.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../ItemRepository.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../PLCManager.h
+CMakeFiles/scada4home.dir/ControlManager.o: ../Pop3Client.h
+CMakeFiles/scada4home.dir/ControlManager.o: ../RASManager.h
+CMakeFiles/scada4home.dir/ControlManager.o: ../SMTPClient.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../SharedTypes.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../mongoose.h
@@ -59,6 +62,19 @@ CMakeFiles/scada4home.dir/PLCManager.o: /usr/local/include/modbus/modbus-tcp.h
 CMakeFiles/scada4home.dir/PLCManager.o: /usr/local/include/modbus/modbus-version.h
 CMakeFiles/scada4home.dir/PLCManager.o: /usr/local/include/modbus/modbus.h
 
+CMakeFiles/scada4home.dir/Pop3Client.o: ../Pop3Client.cpp
+CMakeFiles/scada4home.dir/Pop3Client.o: ../Pop3Client.h
+
+CMakeFiles/scada4home.dir/RASManager.o: ../LogTracer.h
+CMakeFiles/scada4home.dir/RASManager.o: ../Pop3Client.h
+CMakeFiles/scada4home.dir/RASManager.o: ../RASManager.cpp
+CMakeFiles/scada4home.dir/RASManager.o: ../RASManager.h
+CMakeFiles/scada4home.dir/RASManager.o: ../SMTPClient.h
+CMakeFiles/scada4home.dir/RASManager.o: ../SharedTypes.h
+
+CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.cpp
+CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.h
+
 CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.cpp
 CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/ScadaItem.o: ../SharedTypes.h
@@ -73,6 +89,9 @@ CMakeFiles/scada4home.dir/main.o: ../IntertechnoFSM.h
 CMakeFiles/scada4home.dir/main.o: ../ItemRepository.h
 CMakeFiles/scada4home.dir/main.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/main.o: ../PLCManager.h
+CMakeFiles/scada4home.dir/main.o: ../Pop3Client.h
+CMakeFiles/scada4home.dir/main.o: ../RASManager.h
+CMakeFiles/scada4home.dir/main.o: ../SMTPClient.h
 CMakeFiles/scada4home.dir/main.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/main.o: ../SharedTypes.h
 CMakeFiles/scada4home.dir/main.o: ../main.cpp

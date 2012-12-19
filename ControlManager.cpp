@@ -26,6 +26,7 @@ ControlManager::ControlManager()
   _PLC = new PLCManager(this,_Logger);
   _CUL = new CULManager(this,_Logger); 
   _HMI = new HMIManager(_ItemRepo,this,_Logger);
+  _RAS = new RASManager(this,_Logger);
 
 }
 
@@ -45,6 +46,7 @@ bool ControlManager::Start()
   _PLC->Start();
   _CUL->Start();
   _HMI->Start();
+  _RAS->Start();
  
   
 }
@@ -54,6 +56,7 @@ void ControlManager::Stop()
   _PLC->Stop();
   _CUL->Stop();
   _HMI->Stop();
+  _RAS->Stop();
 }
 
 void ControlManager::PLCMessageReceived(ItemUpdateMessage argMsg)

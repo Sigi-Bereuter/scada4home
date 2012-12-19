@@ -36,6 +36,7 @@ class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventS
     PLCManager *_PLC;
     CULManager *_CUL;
     HMIManager *_HMI;
+    ItemRepository *_ItemRepo;
     void PLCMessageReceived(ItemUpdateMessage argMsg);
     void CULMessageReceived(ItemUpdateMessage argMsg);
     void HMIMessageReceived(ItemUpdateMessage argMsg);

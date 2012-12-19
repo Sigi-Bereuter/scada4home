@@ -1,4 +1,7 @@
 FILE(REMOVE_RECURSE
+  "CMakeFiles/scada4home.dir/SMTPClient.o"
+  "CMakeFiles/scada4home.dir/RASManager.o"
+  "CMakeFiles/scada4home.dir/Pop3Client.o"
   "CMakeFiles/scada4home.dir/SharedUtils.o"
   "CMakeFiles/scada4home.dir/ScadaItem.o"
   "CMakeFiles/scada4home.dir/ItemRepository.o"

@@ -17,39 +17,24 @@
 */
 
 
-#ifndef CONTROLMANAGER_H
-#define CONTROLMANAGER_H
+#ifndef SMTPCLIENT_H
+#define SMTPCLIENT_H
+#include <string>
 
-#include "LogTracer.h"
-#include "PLCManager.h"
-#include "CULManager.h"
-#include "HMIManager.h"
-#include "RASManager.h"
-#include "SharedTypes.h"
-#include <termios.h>
+using namespace std;
 
-
-
-class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventSubscriber
+class SMTPClient
 {
   private:
-    LogTracer *_Logger;
-    PLCManager *_PLC;
-    CULManager *_CUL;
-    HMIManager *_HMI;
-    RASManager * _RAS;
-    ItemRepository *_ItemRepo;
-    void PLCMessageReceived(ItemUpdateMessage argMsg);
-    void CULMessageReceived(ItemUpdateMessage argMsg);
-    void HMIMessageReceived(ItemUpdateMessage argMsg);
-    void RASMessageReceived(ItemUpdateMessage argMsg);
+    int _SocketHandle;
+    void SendSocket(string argText);
+    void ReadSocket();
     
-
+  
   public:
-    ControlManager();
-    virtual ~ControlManager();
-    bool Start();
-    void Stop();
+    void SendMail(string argReceiverEmail,string argSubject,string argText);
+    SMTPClient();
+    virtual ~SMTPClient();
 };
 
-#endif // CONTROLMANAGER_H
+#endif // SMTPCLIENT_H

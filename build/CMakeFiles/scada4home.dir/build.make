@@ -46,9 +46,78 @@ include CMakeFiles/scada4home.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/scada4home.dir/flags.make
 
+CMakeFiles/scada4home.dir/SMTPClient.o: CMakeFiles/scada4home.dir/flags.make
+CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/SMTPClient.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/SMTPClient.o -c /home/besi/projects/Scada4Home/SMTPClient.cpp
+
+CMakeFiles/scada4home.dir/SMTPClient.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/scada4home.dir/SMTPClient.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/besi/projects/Scada4Home/SMTPClient.cpp > CMakeFiles/scada4home.dir/SMTPClient.i
+
+CMakeFiles/scada4home.dir/SMTPClient.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/scada4home.dir/SMTPClient.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/besi/projects/Scada4Home/SMTPClient.cpp -o CMakeFiles/scada4home.dir/SMTPClient.s
+
+CMakeFiles/scada4home.dir/SMTPClient.o.requires:
+.PHONY : CMakeFiles/scada4home.dir/SMTPClient.o.requires
+
+CMakeFiles/scada4home.dir/SMTPClient.o.provides: CMakeFiles/scada4home.dir/SMTPClient.o.requires
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/SMTPClient.o.provides.build
+.PHONY : CMakeFiles/scada4home.dir/SMTPClient.o.provides
+
+CMakeFiles/scada4home.dir/SMTPClient.o.provides.build: CMakeFiles/scada4home.dir/SMTPClient.o
+
+CMakeFiles/scada4home.dir/RASManager.o: CMakeFiles/scada4home.dir/flags.make
+CMakeFiles/scada4home.dir/RASManager.o: ../RASManager.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_2)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/RASManager.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/RASManager.o -c /home/besi/projects/Scada4Home/RASManager.cpp
+
+CMakeFiles/scada4home.dir/RASManager.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/scada4home.dir/RASManager.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/besi/projects/Scada4Home/RASManager.cpp > CMakeFiles/scada4home.dir/RASManager.i
+
+CMakeFiles/scada4home.dir/RASManager.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/scada4home.dir/RASManager.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/besi/projects/Scada4Home/RASManager.cpp -o CMakeFiles/scada4home.dir/RASManager.s
+
+CMakeFiles/scada4home.dir/RASManager.o.requires:
+.PHONY : CMakeFiles/scada4home.dir/RASManager.o.requires
+
+CMakeFiles/scada4home.dir/RASManager.o.provides: CMakeFiles/scada4home.dir/RASManager.o.requires
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/RASManager.o.provides.build
+.PHONY : CMakeFiles/scada4home.dir/RASManager.o.provides
+
+CMakeFiles/scada4home.dir/RASManager.o.provides.build: CMakeFiles/scada4home.dir/RASManager.o
+
+CMakeFiles/scada4home.dir/Pop3Client.o: CMakeFiles/scada4home.dir/flags.make
+CMakeFiles/scada4home.dir/Pop3Client.o: ../Pop3Client.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_3)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/Pop3Client.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/Pop3Client.o -c /home/besi/projects/Scada4Home/Pop3Client.cpp
+
+CMakeFiles/scada4home.dir/Pop3Client.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/scada4home.dir/Pop3Client.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/besi/projects/Scada4Home/Pop3Client.cpp > CMakeFiles/scada4home.dir/Pop3Client.i
+
+CMakeFiles/scada4home.dir/Pop3Client.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/scada4home.dir/Pop3Client.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/besi/projects/Scada4Home/Pop3Client.cpp -o CMakeFiles/scada4home.dir/Pop3Client.s
+
+CMakeFiles/scada4home.dir/Pop3Client.o.requires:
+.PHONY : CMakeFiles/scada4home.dir/Pop3Client.o.requires
+
+CMakeFiles/scada4home.dir/Pop3Client.o.provides: CMakeFiles/scada4home.dir/Pop3Client.o.requires
+	$(MAKE) -f CMakeFiles/scada4home.dir/build.make CMakeFiles/scada4home.dir/Pop3Client.o.provides.build
+.PHONY : CMakeFiles/scada4home.dir/Pop3Client.o.provides
+
+CMakeFiles/scada4home.dir/Pop3Client.o.provides.build: CMakeFiles/scada4home.dir/Pop3Client.o
+
 CMakeFiles/scada4home.dir/SharedUtils.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedUtils.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/SharedUtils.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/SharedUtils.o -c /home/besi/projects/Scada4Home/SharedUtils.cpp
 
@@ -71,7 +140,7 @@ CMakeFiles/scada4home.dir/SharedUtils.o.provides.build: CMakeFiles/scada4home.di
 
 CMakeFiles/scada4home.dir/ScadaItem.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/ScadaItem.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/ScadaItem.o -c /home/besi/projects/Scada4Home/ScadaItem.cpp
 
@@ -94,7 +163,7 @@ CMakeFiles/scada4home.dir/ScadaItem.o.provides.build: CMakeFiles/scada4home.dir/
 
 CMakeFiles/scada4home.dir/ItemRepository.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/ItemRepository.o: ../ItemRepository.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_3)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_6)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/ItemRepository.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/ItemRepository.o -c /home/besi/projects/Scada4Home/ItemRepository.cpp
 
@@ -117,7 +186,7 @@ CMakeFiles/scada4home.dir/ItemRepository.o.provides.build: CMakeFiles/scada4home
 
 CMakeFiles/scada4home.dir/HMIManager.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/HMIManager.o: ../HMIManager.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_4)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_7)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/HMIManager.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/HMIManager.o -c /home/besi/projects/Scada4Home/HMIManager.cpp
 
@@ -140,7 +209,7 @@ CMakeFiles/scada4home.dir/HMIManager.o.provides.build: CMakeFiles/scada4home.dir
 
 CMakeFiles/scada4home.dir/IntertechnoFSM.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/IntertechnoFSM.o: ../IntertechnoFSM.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_5)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_8)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/IntertechnoFSM.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/IntertechnoFSM.o -c /home/besi/projects/Scada4Home/IntertechnoFSM.cpp
 
@@ -163,7 +232,7 @@ CMakeFiles/scada4home.dir/IntertechnoFSM.o.provides.build: CMakeFiles/scada4home
 
 CMakeFiles/scada4home.dir/LogTracer.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/LogTracer.o: ../LogTracer.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_6)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_9)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/LogTracer.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/LogTracer.o -c /home/besi/projects/Scada4Home/LogTracer.cpp
 
@@ -186,7 +255,7 @@ CMakeFiles/scada4home.dir/LogTracer.o.provides.build: CMakeFiles/scada4home.dir/
 
 CMakeFiles/scada4home.dir/ControlManager.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/ControlManager.o: ../ControlManager.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_7)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_10)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/ControlManager.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/ControlManager.o -c /home/besi/projects/Scada4Home/ControlManager.cpp
 
@@ -209,7 +278,7 @@ CMakeFiles/scada4home.dir/ControlManager.o.provides.build: CMakeFiles/scada4home
 
 CMakeFiles/scada4home.dir/CULManager.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/CULManager.o: ../CULManager.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_8)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_11)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/CULManager.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/CULManager.o -c /home/besi/projects/Scada4Home/CULManager.cpp
 
@@ -232,7 +301,7 @@ CMakeFiles/scada4home.dir/CULManager.o.provides.build: CMakeFiles/scada4home.dir
 
 CMakeFiles/scada4home.dir/CUNOEmulator.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/CUNOEmulator.o: ../CUNOEmulator.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_9)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_12)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/CUNOEmulator.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/CUNOEmulator.o -c /home/besi/projects/Scada4Home/CUNOEmulator.cpp
 
@@ -255,7 +324,7 @@ CMakeFiles/scada4home.dir/CUNOEmulator.o.provides.build: CMakeFiles/scada4home.d
 
 CMakeFiles/scada4home.dir/PLCManager.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/PLCManager.o: ../PLCManager.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_10)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_13)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/PLCManager.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/PLCManager.o -c /home/besi/projects/Scada4Home/PLCManager.cpp
 
@@ -278,7 +347,7 @@ CMakeFiles/scada4home.dir/PLCManager.o.provides.build: CMakeFiles/scada4home.dir
 
 CMakeFiles/scada4home.dir/main.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/main.o: ../main.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_11)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_14)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/main.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/main.o -c /home/besi/projects/Scada4Home/main.cpp
 
@@ -301,7 +370,7 @@ CMakeFiles/scada4home.dir/main.o.provides.build: CMakeFiles/scada4home.dir/main.
 
 CMakeFiles/scada4home.dir/mongoose.o: CMakeFiles/scada4home.dir/flags.make
 CMakeFiles/scada4home.dir/mongoose.o: ../mongoose.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_12)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/besi/projects/Scada4Home/build/CMakeFiles $(CMAKE_PROGRESS_15)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/scada4home.dir/mongoose.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/scada4home.dir/mongoose.o -c /home/besi/projects/Scada4Home/mongoose.cpp
 
@@ -324,6 +393,9 @@ CMakeFiles/scada4home.dir/mongoose.o.provides.build: CMakeFiles/scada4home.dir/m
 
 # Object files for target scada4home
 scada4home_OBJECTS = \
+"CMakeFiles/scada4home.dir/SMTPClient.o" \
+"CMakeFiles/scada4home.dir/RASManager.o" \
+"CMakeFiles/scada4home.dir/Pop3Client.o" \
 "CMakeFiles/scada4home.dir/SharedUtils.o" \
 "CMakeFiles/scada4home.dir/ScadaItem.o" \
 "CMakeFiles/scada4home.dir/ItemRepository.o" \
@@ -340,6 +412,9 @@ scada4home_OBJECTS = \
 # External object files for target scada4home
 scada4home_EXTERNAL_OBJECTS =
 
+scada4home: CMakeFiles/scada4home.dir/SMTPClient.o
+scada4home: CMakeFiles/scada4home.dir/RASManager.o
+scada4home: CMakeFiles/scada4home.dir/Pop3Client.o
 scada4home: CMakeFiles/scada4home.dir/SharedUtils.o
 scada4home: CMakeFiles/scada4home.dir/ScadaItem.o
 scada4home: CMakeFiles/scada4home.dir/ItemRepository.o
@@ -365,6 +440,9 @@ scada4home: CMakeFiles/scada4home.dir/link.txt
 CMakeFiles/scada4home.dir/build: scada4home
 .PHONY : CMakeFiles/scada4home.dir/build
 
+CMakeFiles/scada4home.dir/requires: CMakeFiles/scada4home.dir/SMTPClient.o.requires
+CMakeFiles/scada4home.dir/requires: CMakeFiles/scada4home.dir/RASManager.o.requires
+CMakeFiles/scada4home.dir/requires: CMakeFiles/scada4home.dir/Pop3Client.o.requires
 CMakeFiles/scada4home.dir/requires: CMakeFiles/scada4home.dir/SharedUtils.o.requires
 CMakeFiles/scada4home.dir/requires: CMakeFiles/scada4home.dir/ScadaItem.o.requires
 CMakeFiles/scada4home.dir/requires: CMakeFiles/scada4home.dir/ItemRepository.o.requires

@@ -63,15 +63,21 @@ CMakeFiles/scada4home.dir/PLCManager.o
  /usr/local/include/modbus/modbus-version.h
  /usr/local/include/modbus/modbus.h
 CMakeFiles/scada4home.dir/Pop3Client.o
+ /home/besi/projects/Scada4Home/LogTracer.h
  /home/besi/projects/Scada4Home/Pop3Client.cpp
  /home/besi/projects/Scada4Home/Pop3Client.h
+ /home/besi/projects/Scada4Home/SharedTypes.h
+ /home/besi/projects/Scada4Home/SharedUtils.h
 CMakeFiles/scada4home.dir/RASManager.o
+ /home/besi/projects/Scada4Home/ItemRepository.h
  /home/besi/projects/Scada4Home/LogTracer.h
  /home/besi/projects/Scada4Home/Pop3Client.h
  /home/besi/projects/Scada4Home/RASManager.cpp
  /home/besi/projects/Scada4Home/RASManager.h
  /home/besi/projects/Scada4Home/SMTPClient.h
+ /home/besi/projects/Scada4Home/ScadaItem.h
  /home/besi/projects/Scada4Home/SharedTypes.h
+ /home/besi/projects/Scada4Home/SharedUtils.h
 CMakeFiles/scada4home.dir/SMTPClient.o
  /home/besi/projects/Scada4Home/SMTPClient.cpp
  /home/besi/projects/Scada4Home/SMTPClient.h
@@ -80,6 +86,7 @@ CMakeFiles/scada4home.dir/ScadaItem.o
  /home/besi/projects/Scada4Home/ScadaItem.h
  /home/besi/projects/Scada4Home/SharedTypes.h
 CMakeFiles/scada4home.dir/SharedUtils.o
+ /home/besi/projects/Scada4Home/SharedTypes.h
  /home/besi/projects/Scada4Home/SharedUtils.cpp
  /home/besi/projects/Scada4Home/SharedUtils.h
 CMakeFiles/scada4home.dir/main.o

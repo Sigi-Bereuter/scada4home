@@ -24,6 +24,7 @@
 #include "PLCManager.h"
 #include "CULManager.h"
 #include "HMIManager.h"
+#include "RASManager.h"
 #include "SharedTypes.h"
 #include <termios.h>
 
@@ -36,10 +37,12 @@ class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventS
     PLCManager *_PLC;
     CULManager *_CUL;
     HMIManager *_HMI;
+    RASManager * _RAS;
     ItemRepository *_ItemRepo;
     void PLCMessageReceived(ItemUpdateMessage argMsg);
     void CULMessageReceived(ItemUpdateMessage argMsg);
     void HMIMessageReceived(ItemUpdateMessage argMsg);
+    void RASMessageReceived(ItemUpdateMessage argMsg);
     
 
   public:

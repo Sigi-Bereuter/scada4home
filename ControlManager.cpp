@@ -26,7 +26,7 @@ ControlManager::ControlManager()
   _PLC = new PLCManager(this,_Logger);
   _CUL = new CULManager(this,_Logger); 
   _HMI = new HMIManager(_ItemRepo,this,_Logger);
-  _RAS = new RASManager(this,_Logger);
+  _RAS = new RASManager(_ItemRepo,this,_Logger);
 
 }
 
@@ -85,4 +85,16 @@ void ControlManager::HMIMessageReceived(ItemUpdateMessage argMsg)
   _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
 }
 
+void ControlManager::RASMessageReceived(ItemUpdateMessage argMsg)
+{
+  _Logger->Trace("Received RAS_NewMessage Callback");  
+  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
+  
+  if(argMsg.MsgType == ItemMessageTypes::StatusRequest)
+  {
+    //Let Repository be updated meanwhile
+    //TODO wait for the corresponding PLC-message instead of time
+    usleep(1000000);
+  }
+}
 

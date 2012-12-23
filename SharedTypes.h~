@@ -33,7 +33,7 @@ namespace ItemTypes
 }
 namespace ItemProperties
 {
-  enum T  : uint8_t {Status=1,Position=2};
+  enum T  : uint8_t {Status=1,Position=2,Value=3};
 }
 
 typedef struct
@@ -64,6 +64,12 @@ class IHMIEventSubscriber
 {
   public:
     virtual void HMIMessageReceived(ItemUpdateMessage argMsg) = 0;
+};
+
+class IRASEventSubscriber
+{
+  public:
+    virtual void RASMessageReceived(ItemUpdateMessage argMsg) = 0;
 };
 
 #endif // SHAREDTYPES_H

@@ -25,7 +25,7 @@
 
 namespace ItemMessageTypes
 {
-  enum T : uint8_t {StatusUpdate=1, Event=2,Alive=3};
+  enum T : uint8_t {StatusUpdate=1,Command=2,Alive=3,StatusRequest=4,Error=99};
 }
 namespace ItemTypes
 {
@@ -64,6 +64,12 @@ class IHMIEventSubscriber
 {
   public:
     virtual void HMIMessageReceived(ItemUpdateMessage argMsg) = 0;
+};
+
+class IRASEventSubscriber
+{
+  public:
+    virtual void RASMessageReceived(ItemUpdateMessage argMsg) = 0;
 };
 
 #endif // SHAREDTYPES_H

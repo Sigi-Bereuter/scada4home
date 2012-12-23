@@ -2,11 +2,25 @@
 #define POP3CLIENT_H
 
 #include <string>
+#include <vector>
+#include "LogTracer.h"
+
 
 #define POP3_PORT 110
 
 // Size of 512 bytes is determined by RFC 1939 - "Responses may be up to 512 characters long, including the terminating CRLF"
 #define BUFLEN 512
+
+using namespace std;
+
+struct Email
+{
+  std::string FromAddr;
+  std::string ToAddr;
+  std::string Subject;
+  std::string Date;
+  std::string BodyText;
+};
 
 /**
  * Simple POP3 client class
@@ -15,6 +29,7 @@
  * Messages are raw and unformatted
  */
 class Pop3Client {
+	LogTracer *_Logger;
 	std::string host;				/// host name
 	unsigned short port;			/// port number (0-65535)
 	int sockfd;						/// socket to connect
@@ -31,13 +46,13 @@ class Pop3Client {
 	bool analyzeMessage(std::string& msg) const;					/// check the response status
 	
 	public:
-	Pop3Client(const std::string& ahostname, const unsigned short aport=POP3_PORT);
+	Pop3Client(const std::string& ahostname,LogTracer *argLogger, const unsigned short aport=POP3_PORT);
 	~Pop3Client();
 
 	void setShortMessage(const bool type=false)	{ shortMessage = type; }		// set verbose type
 	void login(const std::string& user,const std::string& passwd);		// login with a given username
-	void listMails();					// list all emails
-	void getMail(const unsigned int i);	// retrieve a given email
+	void listMails(vector<int>& argMsgIdList);					// list all emails
+	bool FetchMail(const unsigned int i,Email& curMail);	// retrieve a given email
 	void quit();						// quit the POP3 server
 };
 

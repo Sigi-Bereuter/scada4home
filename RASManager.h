@@ -24,6 +24,7 @@
 #include "SMTPClient.h"
 #include "LogTracer.h"
 #include "SharedTypes.h"
+#include "ItemRepository.h"
 
 class RASManager
 {
@@ -33,10 +34,13 @@ class RASManager
     timeval _LastPop3Fetch;
     LogTracer *_Logger;
     pthread_t _ProcessingThread; 
-    IPLCEventSubscriber *_EventSubscriber;
+    IRASEventSubscriber *_EventSubscriber;
+    ItemRepository *_ItemRepo;
     void FetchPop3Mails();
     void SendMail(string argReceiverEmail,string argSubject,string argBodyText);
-    void AnalyzeMail(string argMailText);
+    void AnalyzeMail(Email argMail);
+    void HandleAnalyzeError(Email argMail, string argText);
+    void SendHelp(Email argMail);
     static void *LaunchMemberFunction(void *obj)
      {
 	RASManager *targetObj = reinterpret_cast<RASManager *>(obj);
@@ -47,7 +51,7 @@ class RASManager
     bool Start();
     void Stop();
     void * ProcessingLoop();
-    RASManager(IPLCEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+    RASManager(ItemRepository *argItemRepo,IRASEventSubscriber *argEventSubsciber,LogTracer *argLogger);
     virtual ~RASManager();
 };
 

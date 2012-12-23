@@ -9,12 +9,15 @@
 #include <sys/socket.h>
 #include <string>
 #include <unistd.h>
+#include <stdlib.h>
+#include "SharedUtils.h"
 
 /**
  * Constructor class connect to a socket and receives a greeting line from POP3 server
  */
-Pop3Client::Pop3Client(const std::string& ahostname, const unsigned short aport) 
+Pop3Client::Pop3Client(const std::string& ahostname,LogTracer* argLogger, const unsigned short aport) 
 {
+    _Logger = argLogger;
     try
     {
 	shortMessage = false;
@@ -210,37 +213,52 @@ void Pop3Client::receiveMessage(std::string& message) {
 /**
  * List all messages at POP3 server using the LIST command
  */
-void Pop3Client::listMails() {
-	std::string message = "LIST\n";
+void Pop3Client::listMails(vector<int>& argMsgIdList) 
+{
+	std::string result = "";
 
-	sendReceive(message);	// status message
-	receiveMessage(message);	// data
+	sendReceive("LIST\n");	// status message
+	receiveMessage(result);	// data
 
-	if (message.length() == 3) {	// = ".CRLF"
+	if (result.length() == 3) {	// = ".CRLF"
 		std::cout << "No new messages" << std::endl;
 		return;
 	}
 
 	if (shortMessage) {
 		// remove last dot + CRLF
-		message.erase( message.length() - 3, 3);
+		result.erase( result.length() - 3, 3);
 	}
+	
+	vector<string> msgList;
+	SharedUtils::Tokenize(result,msgList,"\n");	
+	for(vector<string>::iterator iter = msgList.begin(); iter!=msgList.end(); ++iter)
+	{
+	  string curLine = (*iter);
+	  int numEnd = curLine.find_first_of(' ');
+	  curLine[numEnd] = 0;
+	  int msgId = atoi(curLine.c_str());
+	  argMsgIdList.push_back(msgId);	  
+	}
+	
 
-	std::cout << message;
+	std::cout << result;
 }
 
 /**
  * Retrieve a given email using its ID number
  */
-void Pop3Client::getMail(const unsigned int i) {
+bool Pop3Client::FetchMail(const unsigned int i,Email& argMail ) {
 	// convert integer value to string
 	std::stringstream ss;
 	ss << i;
-	std::string message = "RETR " + ss.str() + "\n";
+	std::string responseData = "";
+	std::string responseHeader = "";
 	
 	try {
-		sendReceive(message);	// status message
-		receiveMessage(message);	// data
+		std::string request = "RETR " + ss.str() + "\n";				
+		responseHeader = sendReceive(request);	// status message
+		receiveMessage(responseData);	// data
 	}
 	catch (const char * e) {
 		std::string tmp(e);
@@ -252,15 +270,88 @@ void Pop3Client::getMail(const unsigned int i) {
 	catch (...) {
 		std::cerr << "An error occured during receiving message " << i << std::endl;
 	}
-
-	if (shortMessage) {
-		// print message without header and last termination octet
-		const size_t pos = message.find("\r\n\r\n");
-		std::cout << message.substr(pos+4, message.length() - pos-4 -3 );	// last "-3" is to remove last ".\r\n"
+	
+	
+	try {
+		std::string request = "DELE " + ss.str() + "\n";				
+		sendReceive(request);	// status message		
 	}
-	else
-		std::cout << message;	
+	catch (const char * e) {
+		std::string tmp(e);
+		if (tmp == "Error response") {
+			std::cerr << "Can't delete message " << i << std::endl;
+			throw e;
+		}
+	}
+	catch (...) {
+		std::cerr << "An error occured during deleting message " << i << std::endl;
+	}
+	
+	vector<string> msgLines;	
+	std::string allText = responseHeader + responseData;
+	SharedUtils::Tokenize(allText,msgLines,"\r\n");	
+	bool fromFound = false;
+	bool subjFound = false;
+	bool toFound = false;
+	bool dateFound = false;
+	for(vector<string>::iterator iter = msgLines.begin(); iter!=msgLines.end(); ++iter)
+	{
+	  string curLine = (*iter);
+	  string searchStr = "From:";
+	  int sPos = curLine.find(searchStr);
+	  if(sPos == 0)
+	  {
+	    std::string from = curLine.substr(searchStr.length(),curLine.length() - searchStr.length());
+	    int startPos=from.find_first_of('<')+1;
+	    int endPos = from.find_last_of('>')-1;
+	    if(startPos > 0 && endPos > startPos)
+	    {
+	      argMail.FromAddr = from.substr(startPos,endPos-startPos+1);
+	      fromFound = true;
+	    }
+	  }
+	  searchStr = "To:";
+	  sPos = curLine.find(searchStr);
+	  if(sPos == 0)
+	  {
+	    argMail.ToAddr = curLine.substr(searchStr.length(),curLine.length() - searchStr.length());
+	    toFound = true;
+	  }	
+	  searchStr = "Subject:";
+	  sPos = curLine.find(searchStr);
+	  if(sPos == 0)
+	  {
+	    argMail.Subject = curLine.substr(searchStr.length(),curLine.length() - searchStr.length());
+	    subjFound = true;
+	  }
+	  searchStr = "Date:";
+	  sPos = curLine.find(searchStr);
+	  if(sPos == 0)
+	  {
+	    argMail.Date = curLine.substr(searchStr.length(),curLine.length() - searchStr.length());
+	    dateFound = true;	    
+	  }
+	  
+	  if(fromFound && toFound && subjFound && dateFound)
+	    break;
+	  
+	}
+				
+	argMail.BodyText = allText;
+	
+	if(!fromFound)
+	  _Logger->Trace("Received Email does not contain From:",allText);
+	if(!toFound)
+	  _Logger->Trace("Received Email does not contain To:",allText);
+	if(!subjFound)
+	  _Logger->Trace("Received Email does not contain Subject:",allText);
+	if(!dateFound)
+	  _Logger->Trace("Received Email does not contain Date:",allText);
+	
+	
+	return (fromFound && toFound && subjFound && dateFound);
 }
+
 
 /**
  * Quit the POP3 session

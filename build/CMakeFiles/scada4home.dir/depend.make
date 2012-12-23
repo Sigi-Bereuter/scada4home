@@ -62,15 +62,21 @@ CMakeFiles/scada4home.dir/PLCManager.o: /usr/local/include/modbus/modbus-tcp.h
 CMakeFiles/scada4home.dir/PLCManager.o: /usr/local/include/modbus/modbus-version.h
 CMakeFiles/scada4home.dir/PLCManager.o: /usr/local/include/modbus/modbus.h
 
+CMakeFiles/scada4home.dir/Pop3Client.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/Pop3Client.o: ../Pop3Client.cpp
 CMakeFiles/scada4home.dir/Pop3Client.o: ../Pop3Client.h
+CMakeFiles/scada4home.dir/Pop3Client.o: ../SharedTypes.h
+CMakeFiles/scada4home.dir/Pop3Client.o: ../SharedUtils.h
 
+CMakeFiles/scada4home.dir/RASManager.o: ../ItemRepository.h
 CMakeFiles/scada4home.dir/RASManager.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/RASManager.o: ../Pop3Client.h
 CMakeFiles/scada4home.dir/RASManager.o: ../RASManager.cpp
 CMakeFiles/scada4home.dir/RASManager.o: ../RASManager.h
 CMakeFiles/scada4home.dir/RASManager.o: ../SMTPClient.h
+CMakeFiles/scada4home.dir/RASManager.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/RASManager.o: ../SharedTypes.h
+CMakeFiles/scada4home.dir/RASManager.o: ../SharedUtils.h
 
 CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.cpp
 CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.h
@@ -79,6 +85,7 @@ CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.cpp
 CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/ScadaItem.o: ../SharedTypes.h
 
+CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedTypes.h
 CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedUtils.cpp
 CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedUtils.h
 

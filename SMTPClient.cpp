@@ -25,10 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define HELO "HELO scada.bereuter.com\n"
-#define DATA "DATA\n"
-#define AUTH "AUTH LOGIN\n"
-#define QUIT "QUIT\n"
+
 
 SMTPClient::SMTPClient()
 {
@@ -96,19 +93,22 @@ void SMTPClient::SendMail(string argReceiverEmail,string argSubject,string argTe
   }
 
   /*=====Write some data then read some =====*/
+  
 
   ReadSocket(); /* SMTP Server logon string */
 
-  SendSocket(HELO); /* introduce ourselves */
+  SendSocket("EHLO scada4home\n"); /* introduce ourselves */
   ReadSocket(); /*Read reply */
   
-  SendSocket(AUTH); /* start login sequence */
+  SendSocket("AUTH LOGIN\n"); /* start login sequence */
   ReadSocket(); /*Read reply */
   
   SendSocket(username); /* send username */
+  SendSocket("\n");
   ReadSocket(); /*Read reply */
   
   SendSocket(password); /* ssend password */
+  SendSocket("\n");
   ReadSocket(); /*Read reply */
 
   SendSocket("MAIL from: "); /* Mail from us */
@@ -121,15 +121,22 @@ void SMTPClient::SendMail(string argReceiverEmail,string argSubject,string argTe
   SendSocket("\n");
   ReadSocket(); /*Recipient OK*/
 
-  SendSocket(DATA);/*body to follow*/
+  SendSocket("DATA\n");/*body to follow*/
   ReadSocket(); /*ok to send */
   
+  SendSocket("From: " + from_id); /*send file*/
+  SendSocket("\n");
+  SendSocket("To: " + argReceiverEmail); /*send file*/
+  SendSocket("\n");
+  SendSocket("Subject: " + argSubject); /*send file*/
+  SendSocket("\n");
+  SendSocket("\n");
   
   SendSocket(argText.c_str()); /*send file*/
-  SendSocket(".\n");
+  SendSocket("\r\n.\r\n");
 
   ReadSocket(); /* OK*/
-  SendSocket(QUIT); /* quit */
+  SendSocket("QUIT\n"); /* quit */  
   ReadSocket(); /* log off */
 
   /*=====Close socket and finish=====*/

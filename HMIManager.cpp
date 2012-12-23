@@ -280,30 +280,7 @@ static void ajax_sitemaps(struct mg_connection *conn,const struct mg_request_inf
 
 
 
-int16_t ConvertToItemValue(string argStringValue,ItemTypes::T argItemType)
-{
-  int16_t result = 0;
-  if(argStringValue == "ON")
-    return 1;
-  else if(argStringValue == "OFF")
-    return 0;
-  else if(argStringValue == "UP")
-    return 1;
-  else if(argStringValue == "DOWN")
-    return 2;
-  else if(argStringValue == "STOP")
-    return 0;
-  else if(argItemType == ItemTypes::Switch)
-  {
-    result = atoi(argStringValue.c_str());
-  }
-  else
-  {
-    printf("ItemValue %s undefined\r\n",argStringValue.c_str());    
-    return 0;  
-  }
- 
-}
+
 
 
 
@@ -436,11 +413,11 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 	value_data[value_data_len] = 0;	//Add Null-Termination manually
 	
 	ItemUpdateMessage msg;
-	msg.MsgType = ItemMessageTypes::StatusUpdate;
+	msg.MsgType = ItemMessageTypes::Command;
 	msg.ItemType = item->ItemType;
 	msg.ItemIndex = item->Index;
 	msg.Property = ItemProperties::Status;
-	msg.Value = ConvertToItemValue(value_data,msg.ItemType);
+	msg.Value = SharedUtils::ConvertToItemValue(value_data,msg.ItemType);
 	HMIManager::GetInstance()->NotifyUserMessage(msg);
 		
 	printf(" %s is %s \n ",request_info->uri,value_data);

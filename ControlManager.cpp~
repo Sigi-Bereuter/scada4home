@@ -21,11 +21,18 @@
 
 ControlManager::ControlManager()
 {
-  _Logger = new LogTracer();
+   std::cout << "Init Logtracer..." << std::endl;
+   _Logger = new LogTracer();
+    std::cout << "Init ItemRepository 1..." << std::endl;
+   _Logger->Log(LogTypes::Audit, "Init ItemRepository...");
   _ItemRepo = new ItemRepository(_Logger);
+   _Logger->Log(LogTypes::Audit, "Init PLCManager...");
   _PLC = new PLCManager(this,_Logger);
+  _Logger->Log(LogTypes::Audit, "Init CULManager...");
   _CUL = new CULManager(this,_Logger); 
+  _Logger->Log(LogTypes::Audit, "Init HMIManager...");
   _HMI = new HMIManager(_ItemRepo,this,_Logger);
+   _Logger->Log(LogTypes::Audit, "Init RASManager...");
   _RAS = new RASManager(_ItemRepo,this,_Logger);
 
 }
@@ -39,8 +46,8 @@ bool ControlManager::Start()
 {
   _Logger->SetLogLevel(true);
   
-  _Logger->Trace("Starting ControlManager...");
-  _Logger->Trace("Loading ItemRepository...");
+  _Logger->Log(LogTypes::Audit, "Starting ControlManager...");
+  _Logger->Log(LogTypes::Audit, "Loading ItemRepository...");
   _ItemRepo->Load();
   
   _PLC->Start();
@@ -59,38 +66,39 @@ void ControlManager::Stop()
   _RAS->Stop();
 }
 
-void ControlManager::PLCMessageReceived(ItemUpdateMessage argMsg)
+void ControlManager::PLCMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received PLC_NewMessage Callback");
   if(argMsg.MsgType == ItemMessageTypes::StatusUpdate)
   {
     ScadaItem *item = _ItemRepo->GetItem(argMsg.ItemType,argMsg.ItemIndex);
     if(item != NULL)
-      item->Value = argMsg.Value;
+    {
+      item->Properties[argMsg.Property] = argMsg.Value;
+    }
     
     _HMI->UpdateItemView(argMsg);
     
   }
 }
 
-void ControlManager::CULMessageReceived(ItemUpdateMessage argMsg)
+void ControlManager::CULMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received CUL_NewMessage Callback");
   _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
 }
 
-void ControlManager::HMIMessageReceived(ItemUpdateMessage argMsg)
+void ControlManager::HMIMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received HMI_NewMessage Callback");  
   _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
 }
 
-void ControlManager::RASMessageReceived(ItemUpdateMessage argMsg)
+void ControlManager::RASMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received RAS_NewMessage Callback");  
   _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
-  //Let Repository be updated meanwhile
-  //TODO wait for the corresponding PLC-message instead of time
-  usleep(1000000);
+  
+  
 }
 

@@ -33,7 +33,7 @@ namespace ItemTypes
 }
 namespace ItemProperties
 {
-  enum T  : uint8_t {Status=1,Position=2,Value=3};
+  enum T  : uint8_t {Status=1,Position=2,Value=3,Func=4,All=99};
 }
 
 typedef struct
@@ -43,33 +43,33 @@ typedef struct
     uint8_t ItemIndex;    
     ItemProperties::T Property;
     uint16_t Value;    
-} ItemUpdateMessage;
+} ScadaItemMessage;
 
 
 
 class IPLCEventSubscriber
 {
   public:
-    virtual void PLCMessageReceived(ItemUpdateMessage argMsg) = 0;
+    virtual void PLCMessageReceived(ScadaItemMessage argMsg) = 0;
 };
 
 class ICULEventSubscriber
 {
   public:
-    virtual void CULMessageReceived(ItemUpdateMessage argMsg) = 0;
+    virtual void CULMessageReceived(ScadaItemMessage argMsg) = 0;
 };
 
 
 class IHMIEventSubscriber
 {
   public:
-    virtual void HMIMessageReceived(ItemUpdateMessage argMsg) = 0;
+    virtual void HMIMessageReceived(ScadaItemMessage argMsg) = 0;
 };
 
 class IRASEventSubscriber
 {
   public:
-    virtual void RASMessageReceived(ItemUpdateMessage argMsg) = 0;
+    virtual void RASMessageReceived(ScadaItemMessage argMsg) = 0;
 };
 
 #endif // SHAREDTYPES_H

@@ -44,7 +44,7 @@ static void InitItemUpdateEvent()
   //Wait for HMI-Events, and send result if one happens
   if (sem_init(&ItemUpdateEvent, 0, 0) == -1)
   {
-    printf("sem_init failed!");    
+    LogTracer::GetInstance()->Log(LogTypes::Error,"sem_init for Semaphore ItemUpdateEvent failed!");    
   }
 }
 
@@ -52,10 +52,10 @@ static void SetItemUpdateEvent()
 {
   if (sem_post(&ItemUpdateEvent) == -1)
   {
-    printf("sem_post failed\r\n");
+    LogTracer::GetInstance()->Log(LogTypes::Error,"sem_post for Semaphore ItemUpdateEvent failed");
   }
   else
-    printf("SetItemUpdateEvent\r\n");
+    LogTracer::GetInstance()->Trace("Semaphore ItemUpdateEvent is set");
 }
 
 static void WaitItemUpdateEvent()
@@ -64,12 +64,12 @@ static void WaitItemUpdateEvent()
   clock_gettime(CLOCK_REALTIME, &ts);
   ts.tv_sec += 60;
   int s=0;
-  printf("LongPolling request waiting for ItemUpdateEvent...\n" );  
+  LogTracer::GetInstance()->Trace("LongPolling request waiting for ItemUpdateEvent..." );  
   
   while ((s = sem_timedwait(&ItemUpdateEvent, &ts)) == -1 && errno == EINTR)
     continue;       /* Restart if interrupted by handler */
     
-  printf("Waiting completed, returning LongPolling request\r\n");
+  LogTracer::GetInstance()->Trace("Waiting completed, returning LongPolling request");
 }
 
 
@@ -137,19 +137,19 @@ string HMIManager::GetIconForItemValue(int16_t argItemValue,ItemProperties::T ar
   return "";
 }
 
-void HMIManager::NotifyUserMessage(ItemUpdateMessage argMsg)
+void HMIManager::NotifyUserMessage(ScadaItemMessage argMsg)
 {
   //Let ControlManager dispatch messages resulting from User-Actions
   if(_EventSubscriber != NULL)
     _EventSubscriber->HMIMessageReceived(argMsg);
 }
 
-void HMIManager::UpdateItemView(ItemUpdateMessage argMsg)
+void HMIManager::UpdateItemView(ScadaItemMessage argMsg)
 {
   ScadaItem* item = _ItemRepo->GetItem(argMsg.ItemType,argMsg.ItemIndex);  
   if(item == NULL)
   {
-    _Logger->Trace("Item not in Repository: ",argMsg.ItemType,argMsg.ItemIndex);
+    _Logger->Log(LogTypes::Warning,"Item of Type=%d/Index=%d not found in Repository ",argMsg.ItemType,argMsg.ItemIndex);
     return;   
   }
     
@@ -161,19 +161,19 @@ void HMIManager::UpdateItemView(ItemUpdateMessage argMsg)
   int widgetIdPos = _SiteMaps[item->SiteMap].find(ssWidgetId.str());  
   if(widgetIdPos == string::npos)
   {
-     _Logger->Trace("WidgetId not found in SiteMap for itemIndex ",argMsg.ItemIndex);
+     _Logger->Log(LogTypes::Warning, "WidgetId not found in SiteMap %s for itemIndex %d ",item->SiteMap.c_str(),argMsg.ItemIndex);
      return;
   }
   int labelStartPos = _SiteMaps[item->SiteMap].find(strLabel,widgetIdPos);
   if(labelStartPos == string::npos)
   {
-     _Logger->Trace("No label not found in SiteMap for widget ",ssWidgetId.str());
+     _Logger->Log(LogTypes::Warning,"No label not found in SiteMap %s for widget %s",item->SiteMap.c_str(),ssWidgetId.str().c_str());
      return;
   }
   int iconStartPos = _SiteMaps[item->SiteMap].find(strIcon,labelStartPos);
   if(iconStartPos == string::npos)
   {
-     _Logger->Trace("No icon not found in SiteMap for widget ",ssWidgetId.str());
+     _Logger->Log(LogTypes::Warning,"No icon not found in SiteMap %s for widget %s ",item->SiteMap.c_str(),ssWidgetId.str().c_str());
      return;
   }
   
@@ -193,15 +193,8 @@ void HMIManager::UpdateItemView(ItemUpdateMessage argMsg)
   string strNewLabel = GetLabelForItemValue(argMsg.Value,argMsg.Property,argMsg.ItemType);
   if(strNewLabel != "")
     _SiteMaps[item->SiteMap].replace(labelStartPos,labelLength,strNewLabel); 
-  
-  //string after = _SiteMaps[item->SiteMap];
-  //printf("New SiteMap: %s  \n",after.c_str());
-    
-  //unsigned char sendBuff[512];
-  //int msgLen = 255; 
-  //mg_write(_ClientConnection,sendBuff,msgLen+2);
-  
-    SetItemUpdateEvent();
+      
+  SetItemUpdateEvent();
   
 }
 
@@ -334,7 +327,7 @@ static void* HandleWebSocketMessage(mg_connection *conn)
       msgBuf[n] = reply[n];
             
     string str(msgBuf);
-    printf("WebsocketMessage = %s \n",str.c_str());
+    LogTracer::GetInstance()->Trace("WebsocketMessage = %s ",str.c_str());
 
     // Return non-NULL means stoping websocket conversation.
     // Close the conversation if client has sent us "exit" string.
@@ -350,7 +343,7 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 
   if (event == MG_WEBSOCKET_READY) 
   {    
-    printf("MG_WEBSOCKET_READY\r\n");
+    LogTracer::GetInstance()->Trace("MG_WEBSOCKET_READY");
     unsigned char buf[40];
     buf[0] = 0x81;
     buf[1] = snprintf((char *) buf + 2, sizeof(buf) - 2, "%s", "server ready");
@@ -359,13 +352,13 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
   } 
   else if (event == MG_WEBSOCKET_CONNECT) 
   {   
-    printf("MG_WEBSOCKET_CONNECT\r\n");    
+    LogTracer::GetInstance()->Trace("MG_WEBSOCKET_CONNECT");    
     HMIManager::GetInstance()->SetWebSocketClient(conn);
     return NULL;  
   } 
   else if (event == MG_WEBSOCKET_MESSAGE)
   {
-    printf("MG_WEBSOCKET_MESSAGE\r\n");
+    LogTracer::GetInstance()->Trace("MG_WEBSOCKET_MESSAGE");
     return HandleWebSocketMessage(conn);
   }
   else if (event == MG_NEW_REQUEST)
@@ -403,7 +396,7 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 	item= HMIManager::GetInstance()->GetItem(itemName);
 	if(item == NULL)
 	{
-	  printf("Item-Cfg not found in Repository %s \n",itemName.c_str());
+	  LogTracer::GetInstance()->Log(LogTypes::Error, "Item-Cfg not found in Repository %s ",itemName.c_str());
 	  return processed;
 	}
 		
@@ -412,19 +405,19 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 	value_data_len = mg_read(conn, value_data, sizeof(value_data));
 	value_data[value_data_len] = 0;	//Add Null-Termination manually
 	
-	ItemUpdateMessage msg;
+	ScadaItemMessage msg;
 	msg.MsgType = ItemMessageTypes::Command;
 	msg.ItemType = item->ItemType;
 	msg.ItemIndex = item->Index;
-	msg.Property = ItemProperties::Status;
-	msg.Value = SharedUtils::ConvertToItemValue(value_data,msg.ItemType);
+	msg.Property = ItemProperties::Func;
+	msg.Value = SharedUtils::ConvertToItemValue(value_data,msg.ItemType,msg.Property);
 	HMIManager::GetInstance()->NotifyUserMessage(msg);
 		
-	printf(" %s is %s \n ",request_info->uri,value_data);
+	LogTracer::GetInstance()->Trace("User posted Item %s = %s  ",request_info->uri,value_data);
 	return processed;
       }
       else
-	printf("Unhandled POST-Uri %s  \n ",request_info->uri);
+	LogTracer::GetInstance()->Log(LogTypes::Warning, "Unhandled POST-Uri %s ",request_info->uri);
 	
       
       processed = NULL;
@@ -467,7 +460,7 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
 bool HMIManager::InitWebserver()
 {
   bool success = true;  
-  _Logger->Trace("InitWebserver...");    
+  _Logger->Log(LogTypes::Audit,"Strating InitWebserver...");    
   InitItemUpdateEvent();
   const char *options[] = {"document_root", "greent","listening_ports", "8081","num_threads", "5",NULL};
   _Webserver = mg_start(&WebServerCallback, NULL, options);    
@@ -486,7 +479,7 @@ int HMIManager::GetFilesInDir (string argDir, vector<string> &argFiles)
     dirent *dirp;
     if((dp  = opendir(argDir.c_str())) == NULL)
     {
-        _Logger->Trace("Error opening " , argDir);
+        _Logger->Log(LogTypes::Error, "Error opening file %s" , argDir.c_str());
         return errno;
     }
 
@@ -547,16 +540,17 @@ bool HMIManager::InitSiteMaps()
 	strcat(fullPath, foundFiles[i].c_str());
 	if((f=fopen(fullPath,"r"))==NULL)
 	{
-	  _Logger->Trace("Unable t open sitemap file ",fullPath);
+	  _Logger->Log(LogTypes::Error, "Unable t open sitemap file % s",fullPath);
 	  continue;
 	}
 	
 	fseek(f, 0, SEEK_END);
 	long int size = ftell(f);
 	rewind(f); 
-	if(size > 32000)
-	  _Logger->Trace("Content Size does not match the reserved array: ",size);
-	char strContent[32000];
+	const int arrsize = 32000;
+	if(size > arrsize)
+	  _Logger->Log(LogTypes::Error,"Content Size of sitemap file %s (%i bytes) does not match the reserved array size (%d bytes): ",fullPath,size,arrsize);
+	char strContent[arrsize];
 	int len = fread(strContent,1,size,f);
 	fclose(f);
 	strContent[len] = 0; //Null termination	
@@ -580,10 +574,10 @@ bool HMIManager::Start()
 {
   bool  success = true;
   
-  _Logger->Trace("Starting HMIManager... ");
-  _Logger->Trace("Loading SiteMaps... ");
+  _Logger->Log(LogTypes::Audit, "Starting HMIManager... ");
+  _Logger->Log(LogTypes::Audit,"Loading SiteMaps... ");
   success &= InitSiteMaps(); 
-  _Logger->Trace("Init WebServer... ");
+  _Logger->Log(LogTypes::Audit,"Init WebServer... ");
   success &= InitWebserver();    
       
   return success;

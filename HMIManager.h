@@ -55,8 +55,8 @@ class HMIManager
     bool Start();
     void Stop();
     int GetMessagCount();
-    void NotifyUserMessage(ItemUpdateMessage argMsg);
-    void UpdateItemView(ItemUpdateMessage argMsg);
+    void NotifyUserMessage(ScadaItemMessage argMsg);
+    void UpdateItemView(ScadaItemMessage argMsg);
     string GetSiteMap(string argSiteMapName);
     ScadaItem* GetItem(string argItemName);
     void SetWebSocketClient(mg_connection* argConnection);

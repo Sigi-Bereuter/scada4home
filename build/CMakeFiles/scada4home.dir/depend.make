@@ -78,6 +78,7 @@ CMakeFiles/scada4home.dir/RASManager.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/RASManager.o: ../SharedTypes.h
 CMakeFiles/scada4home.dir/RASManager.o: ../SharedUtils.h
 
+CMakeFiles/scada4home.dir/SMTPClient.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.cpp
 CMakeFiles/scada4home.dir/SMTPClient.o: ../SMTPClient.h
 
@@ -85,6 +86,7 @@ CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.cpp
 CMakeFiles/scada4home.dir/ScadaItem.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/ScadaItem.o: ../SharedTypes.h
 
+CMakeFiles/scada4home.dir/SharedUtils.o: ../LogTracer.h
 CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedTypes.h
 CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedUtils.cpp
 CMakeFiles/scada4home.dir/SharedUtils.o: ../SharedUtils.h

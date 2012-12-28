@@ -18,10 +18,15 @@
 
 
 #include "LogTracer.h"
+#include <stdio.h>
+#include <time.h>
+#include <iostream>
 
 LogTracer::LogTracer()
 {
-  _LogMutex = PTHREAD_MUTEX_INITIALIZER;
+  std::cout << "Init LogTracer" << std::endl;
+  //_LogMutex = PTHREAD_MUTEX_INITIALIZER;
+  _Instance = this;
 }
 
 LogTracer::~LogTracer()
@@ -29,50 +34,77 @@ LogTracer::~LogTracer()
 
 }
 
-void LogTracer::Trace(string argText)
+LogTracer* LogTracer::_Instance = NULL;
+
+LogTracer* LogTracer::GetInstance()
 {
-  if(!_LogVerbose)
-    return;
-   pthread_mutex_lock( &_LogMutex );
-  cout <<  argText << endl;  
-   pthread_mutex_unlock( &_LogMutex );
-}
-void LogTracer::Trace(string argText1, string argText2)
-{
-  if(!_LogVerbose)
-    return;
-   pthread_mutex_lock( &_LogMutex );
-  cout <<  argText1 << argText2 << endl;  
-   pthread_mutex_unlock( &_LogMutex );
+  return _Instance;
 }
 
-void LogTracer::Trace(string argText1, int argText2)
+
+void LogTracer::Log(LogTypes::T argType, string argText, ...)
+{  
+  
+  string strOut = ">" + GetCurrentDateTime();
+  if(argType == LogTypes::Error)
+    strOut += " ERROR ";
+  else if(argType == LogTypes::Warning)
+    strOut += " WARNING ";
+  else if(argType == LogTypes::Audit)
+    strOut += " AUDIT ";
+  
+  strOut += argText + "\n";
+  
+  va_list arguments;                     // A place to store the list of arguments
+   
+  va_start ( arguments, argText );           // Initializing arguments to store all values after num
+ 
+  
+  //pthread_mutex_lock( &_LogMutex );
+  vprintf (strOut.c_str(), arguments);
+ // pthread_mutex_unlock( &_LogMutex );
+ 
+  va_end ( arguments );                  // Cleans up the list
+}
+
+
+void LogTracer::Trace(string argText, ...)
 {
+  
   if(!_LogVerbose)
     return;
-    
-   pthread_mutex_lock( &_LogMutex );
-  cout <<  argText1 << argText2 << endl;  
-   pthread_mutex_unlock( &_LogMutex );
+  
+  string strOut = ">" + GetCurrentDateTime();
+  strOut += " TRACE "+ argText + "\n";
+  
+  va_list arguments;                     // A place to store the list of arguments
+   
+  va_start ( arguments, argText );           // Initializing arguments to store all values after num
+ 
+  // pthread_mutex_lock( &_LogMutex );
+  vprintf (strOut.c_str(), arguments);
+  //pthread_mutex_unlock( &_LogMutex );
+ 
+  va_end ( arguments );                  // Cleans up the list
 }
 
-void LogTracer::Trace(string argText1, int argText2,bool argHighLevel)
+string LogTracer::GetCurrentDateTime()
 {
-  if(!(_LogVerbose || argHighLevel))
-    return;
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
     
-   pthread_mutex_lock( &_LogMutex );
-  cout <<  argText1 << argText2 << endl;  
-   pthread_mutex_unlock( &_LogMutex );
+    //strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+    strftime(buf, sizeof(buf), "%X", &tstruct);
+
+    return buf;
 }
 
-void LogTracer::Trace(string argText1, int argText2,int argText3)
+
+
+void LogTracer::SetLogLevel(bool argHigh)
 {
-    if(!_LogVerbose)
-    return;
-    
-   pthread_mutex_lock( &_LogMutex );
-  cout <<  argText1 << argText2 <<  " ; " << argText3 << endl;  
-   pthread_mutex_unlock( &_LogMutex );
+  _LogVerbose = argHigh;
 }
 

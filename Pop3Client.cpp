@@ -25,13 +25,13 @@ Pop3Client::Pop3Client(const std::string& ahostname,LogTracer* argLogger, const 
 
 	// get host IP address
 	if ((hostinfo = gethostbyname(ahostname.c_str())) == NULL) {
-		std::cerr << "Can't get hostname" << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: Can't get hostname %s",ahostname.c_str());
 		throw "Can't get host name";
 	}
 
 	// create socket
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		std::cerr << "Can't open socket, error = " << strerror(errno) << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: Can't open socket, error = %s",strerror(errno));
 		throw "Can't open socket";
 	}
 	struct sockaddr_in address;
@@ -43,7 +43,7 @@ Pop3Client::Pop3Client(const std::string& ahostname,LogTracer* argLogger, const 
 
 	// connect
 	if ((connect(sockfd, (struct sockaddr *)&address, len)) != 0) {
-		std::cerr << "Can't connect to server, error = " << strerror(errno) << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: Can't connect to server, error = %s ",strerror(errno));
 		throw "Can't connect to server";
 	}
 
@@ -55,13 +55,13 @@ Pop3Client::Pop3Client(const std::string& ahostname,LogTracer* argLogger, const 
 		buffer[result] = '\0';
 	}
 	else {
-		std::cerr << "An error occured during receiving greeting message from POP3 server" << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: An error occured during receiving greeting message from POP3 server");
 		throw "Error during receiving greeting line";
 	}
   }
   catch (...) 
   {
-	std::cerr << "Can't create client";
+	_Logger->Log(LogTypes::Error,"POP3Client: Can't create client");
 	throw;
   }
 }
@@ -91,7 +91,7 @@ void Pop3Client::login(const std::string& user,const std::string& passwd) {
 		else throw e;
 	}
 	catch (...) {
-		std::cerr << "An error occured during login" << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: An error occured during login");
 		throw "Login error";
 	}
 
@@ -102,12 +102,12 @@ void Pop3Client::login(const std::string& user,const std::string& passwd) {
 	catch (const char * e) {
 		std::string tmp(e);
 		if (tmp == "Error response") {
-			std::cerr << "Login is unsuccessful" << std::endl;
+			_Logger->Log(LogTypes::Error,"POP3Client: Login is unsuccessful");
 			throw e;
 		}
 	}
 	catch (...) {
-		std::cerr << "An error occured during login" << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client:  An error occured during login");
 		throw "Login error";
 	}
 }
@@ -120,21 +120,21 @@ std::string Pop3Client::sendReceive(const std::string& message) {
 	// send
 	int result = send(sockfd, message.c_str(), message.length(), 0);
 	if (result == -1) {
-		throw "Message can't be sent";
+		_Logger->Log(LogTypes::Error,"POP3Client: Message can't be sent");
 	}
 	
 	// receive
 	result = recv(sockfd, buffer, BUFLEN, 0);
 	buffer[result] = '\0';
 	if (result == -1) {
-		throw "Message can't be received";
+		_Logger->Log(LogTypes::Error,"POP3Client: Message can't be received");
 		close(sockfd);
 	}
 
 	// we've got the message, now check it
 	std::string response = (std::string)buffer;
 	if (! analyzeMessage(response)) {
-		throw "Error response";
+		_Logger->Log(LogTypes::Error,"POP3Client: Error response");
 	}
 
 	return response;
@@ -151,21 +151,21 @@ bool Pop3Client::analyzeMessage(std::string& msg) const {
 			return true;
 		}
 		else {
-			throw("Invalid position of +OK status");
+			_Logger->Log(LogTypes::Error,"POP3Client:Invalid position of +OK status");
 		}
 	}
 	// -ERR
 	else if (msg.find("-ERR") != std::string::npos) {
 		if (msg.substr(0,4) == "-ERR") {	//	we need to be sure -ERR is at the beginning
 			// print status
-			std::cerr << "Error response from server:" << msg.substr(4, msg.length()-4);
+			_Logger->Log(LogTypes::Error,"POP3Client: Error response from server: %s" , msg.substr(4, msg.length()-4).c_str());
 			return false;
 		}
 		else {
-			throw("Invalid position of -ERR status");
+			_Logger->Log(LogTypes::Error,"POP3Client: Invalid position of -ERR status");
 		}
 	} else {
-		throw("Incorrect response message");
+		_Logger->Log(LogTypes::Error,"POP3Client: Incorrect response message");
 	}
 
 	return false;	// just to suppress warning messages
@@ -176,9 +176,9 @@ bool Pop3Client::analyzeMessage(std::string& msg) const {
  */
 void Pop3Client::sendMessage(const std::string& message) {
 	int result = send(sockfd, message.c_str(), message.length(), 0);
-	if (result == -1) {
-		std::cerr << "Message can't be sent" << std::endl;
-		throw "Message can't be sent";
+	if (result == -1) 
+	{
+		_Logger->Log(LogTypes::Error,"POP3Client: Message can't be sent" );		
 	}
 }
 
@@ -221,7 +221,7 @@ void Pop3Client::listMails(vector<int>& argMsgIdList)
 	receiveMessage(result);	// data
 
 	if (result.length() == 3) {	// = ".CRLF"
-		std::cout << "No new messages" << std::endl;
+		_Logger->Trace("POP3Client: No new messages");
 		return;
 	}
 
@@ -242,7 +242,7 @@ void Pop3Client::listMails(vector<int>& argMsgIdList)
 	}
 	
 
-	std::cout << result;
+	_Logger->Trace("POP3Client: %s", result.c_str());
 }
 
 /**
@@ -263,12 +263,12 @@ bool Pop3Client::FetchMail(const unsigned int i,Email& argMail ) {
 	catch (const char * e) {
 		std::string tmp(e);
 		if (tmp == "Error response") {
-			std::cerr << "Can't get message " << i << std::endl;
+			_Logger->Log(LogTypes::Error,"POP3Client: Can't get message %d", i);
 			throw e;
 		}
 	}
 	catch (...) {
-		std::cerr << "An error occured during receiving message " << i << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: An error occured during receiving message %d",i);
 	}
 	
 	
@@ -279,12 +279,12 @@ bool Pop3Client::FetchMail(const unsigned int i,Email& argMail ) {
 	catch (const char * e) {
 		std::string tmp(e);
 		if (tmp == "Error response") {
-			std::cerr << "Can't delete message " << i << std::endl;
+			_Logger->Log(LogTypes::Error,"POP3Client: Can't delete message %d", i);
 			throw e;
 		}
 	}
 	catch (...) {
-		std::cerr << "An error occured during deleting message " << i << std::endl;
+		_Logger->Log(LogTypes::Error,"POP3Client: An error occured during deleting message %d",i );
 	}
 	
 	vector<string> msgLines;	
@@ -340,13 +340,13 @@ bool Pop3Client::FetchMail(const unsigned int i,Email& argMail ) {
 	argMail.BodyText = allText;
 	
 	if(!fromFound)
-	  _Logger->Trace("Received Email does not contain From:",allText);
+	  _Logger->Log(LogTypes::Warning, "Received Email does not contain From: %s",allText.c_str());
 	if(!toFound)
-	  _Logger->Trace("Received Email does not contain To:",allText);
+	  _Logger->Log(LogTypes::Warning,"Received Email does not contain To: %s",allText.c_str());
 	if(!subjFound)
-	  _Logger->Trace("Received Email does not contain Subject:",allText);
+	  _Logger->Log(LogTypes::Warning,"Received Email does not contain Subject: %s",allText.c_str());
 	if(!dateFound)
-	  _Logger->Trace("Received Email does not contain Date:",allText);
+	  _Logger->Log(LogTypes::Warning,"Received Email does not contain Date: %s",allText.c_str());
 	
 	
 	return (fromFound && toFound && subjFound && dateFound);

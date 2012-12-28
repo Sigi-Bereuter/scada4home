@@ -20,12 +20,14 @@
 #ifndef SMTPCLIENT_H
 #define SMTPCLIENT_H
 #include <string>
+#include "LogTracer.h"
 
 using namespace std;
 
 class SMTPClient
 {
   private:
+    LogTracer *_Logger;
     int _SocketHandle;
     void SendSocket(string argText);
     void ReadSocket();
@@ -33,7 +35,7 @@ class SMTPClient
   
   public:
     void SendMail(string argReceiverEmail,string argSubject,string argText);
-    SMTPClient();
+    SMTPClient(LogTracer * argLogger);
     virtual ~SMTPClient();
 };
 

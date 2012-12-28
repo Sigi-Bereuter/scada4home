@@ -42,7 +42,7 @@ RASManager::~RASManager()
 
 bool RASManager::Start()
 {
-  _Logger->Trace("Starting RASManager...");  
+ _Logger->Log(LogTypes::Audit,"Starting RASManager...");  
       
   pthread_create( &_ProcessingThread, NULL, LaunchMemberFunction,this); // create a thread running function1
     
@@ -53,6 +53,7 @@ bool RASManager::Start()
 void* RASManager::ProcessingLoop()
 {  
     timeval nowTime;
+    gettimeofday(&_LastPop3Fetch,NULL);
     while(1)
     { 		
 	gettimeofday(&nowTime,NULL);
@@ -99,12 +100,12 @@ void RASManager::FetchPop3Mails()
   }
   catch (const char *e) 
   {
-    cerr << "POP3 client failed: " << e << endl;
+    _Logger->Log(LogTypes::Error, "POP3 client failed: %s ", e);
     return ;
   }
   catch (...)
   {
-    cerr << "An unknown error occured, quitting..." << endl;
+    _Logger->Log(LogTypes::Error,"An unknown error occured, quitting...");
     return ;
   }  
 }
@@ -118,88 +119,93 @@ void RASManager::AnalyzeMail(Email argMail)
     return;
   }    
   
-  vector<string> msgLines;
-  SharedUtils::Tokenize(argMail.BodyText,msgLines,"\r\n");	
-  for(vector<string>::iterator iter = msgLines.begin();iter != msgLines.end();++iter)
-  {      
-    string line = (*iter);
-    string marker = "##";
-    int endPos = line.find(marker,marker.length());
-    int startPos = line.find(marker);
-    if(startPos < 0 || endPos <= startPos)
-      continue;      
-    
-    string strCommand = line.substr(startPos+marker.length(),endPos - startPos - marker.length());
-    vector<string> cmdTokens;
-    SharedUtils::Tokenize(strCommand,cmdTokens,"|");
-    if(cmdTokens.size() == 0)
-    {
-      HandleAnalyzeError(argMail,"Received empty command " + line);	
-      continue;
-    }
-    
-    if(cmdTokens.size() == 1)
-    {
-      string strOperator = cmdTokens[0];
-      if(strOperator == "HELP")
-      {
-	SendHelp(argMail);
-      }
-      else
-	HandleAnalyzeError(argMail,"Operators not yet implemented " + line);
-    }
-    else 
-    {
-      string actionType = cmdTokens[0]; 
-      string strItem = cmdTokens[1];
-      
-      ScadaItem *item = _ItemRepo->GetItem(strItem);
-      if(item != NULL)
-      {
-	if(actionType == "GET")
-	{
-	  ItemUpdateMessage msg;
-	  msg.MsgType = ItemMessageTypes::StatusRequest;
-	  msg.ItemType = item->ItemType;
-	  msg.ItemIndex = item->Index;
-	  msg.Property = ItemProperties::Position;
-	  
-	  _EventSubscriber->RASMessageReceived(msg);
-	  
-	  //Somebody updates and the Repo and waits meanwhile
-	  
-	  stringstream sstream;
-	  sstream << " Value=" << item->Value;
-	  SendMail(argMail.FromAddr,"Re:" + argMail.Subject + "(GET Result)","Item " + item->Name + sstream.str());
-	}
-	else if(actionType == "SET")
-	{
-	  if(cmdTokens.size() < 3)
-	  {
-	    HandleAnalyzeError(argMail,"Received command not valid for a SET Action, no Value parameter provided " + strCommand);	
-	    continue;
-	  }
-	  
-	  string strValue = cmdTokens[2];	    
-	  
-	  ItemUpdateMessage msg;
-	  msg.MsgType = ItemMessageTypes::Command;
-	  msg.ItemType = item->ItemType;
-	  msg.ItemIndex = item->Index;
-	  msg.Property = ItemProperties::Value;
-	  msg.Value = SharedUtils::ConvertToItemValue(strValue,item->ItemType);
-      
-	  _EventSubscriber->RASMessageReceived(msg);
-	  SendMail(argMail.FromAddr,"Re:" + argMail.Subject + "(SET Result)","Command " + strCommand +" processed successfully");
-	}
-	else
-	  HandleAnalyzeError(argMail,"Received command not valid for a SET Action, no Value parameter provided " + strCommand);	
-	  
-      }
-      else
-	HandleAnalyzeError(argMail,"Received command for unknown Item " + strCommand);	
-    }  
+  int commandsFound=0;
+  string marker = "##";
+  int startPos = argMail.BodyText.find(marker);
+  int endPos = argMail.BodyText.find(marker,startPos + marker.length());
+  
+  if(startPos < 0 || endPos <= startPos)
+    return;  
+  
+  commandsFound++;
+  
+  string strCommand = argMail.BodyText.substr(startPos+marker.length(),endPos - startPos - marker.length());
+  vector<string> cmdTokens;
+  SharedUtils::Tokenize(strCommand,cmdTokens,"|");
+  if(cmdTokens.size() == 0)
+  {
+    HandleAnalyzeError(argMail,"Received empty command " + argMail.BodyText);	
+    return;  
   }
+  
+  if(cmdTokens.size() == 1)
+  {
+    string strOperator = cmdTokens[0];
+    if(strOperator == "HELP")
+    {
+      SendHelp(argMail);
+    }
+    else
+      HandleAnalyzeError(argMail,"Operators not yet implemented " + argMail.BodyText);
+  }
+  else 
+  {
+    string actionType = cmdTokens[0]; 
+    string strItem = cmdTokens[1];
+    
+    ScadaItem *item = _ItemRepo->GetItem(strItem);
+    if(item != NULL)
+    {
+      if(actionType == "GET")
+      {
+	ScadaItemMessage msg;
+	msg.MsgType = ItemMessageTypes::StatusRequest;
+	msg.ItemType = item->ItemType;
+	msg.ItemIndex = item->Index;
+	msg.Property = ItemProperties::All;
+	
+	_EventSubscriber->RASMessageReceived(msg);
+	
+	
+	//Let Repository be updated meanwhile
+	//TODO wait for the corresponding PLC-message in ControlManager instead of time
+	usleep(1000000);
+	
+	
+	stringstream sstream;
+	sstream << " Status=" << item->Properties[ItemProperties::Status] << "\r\n Position=" << item->Properties[ItemProperties::Position] << "\r\n Value=" << item->Properties[ItemProperties::Value];
+	SendMail(argMail.FromAddr,"Re:" + argMail.Subject + "(GET Result)", "Item " + item->Name + "\r\n" + sstream.str());
+      }
+      else if(actionType == "SET")
+      {
+	if(cmdTokens.size() < 3)
+	{
+	  HandleAnalyzeError(argMail,"Received command not valid for a SET Action, no Value parameter provided " + strCommand);	
+	  return;  
+	}
+	
+	string strValue = cmdTokens[2];	    
+	
+	ScadaItemMessage msg;
+	msg.MsgType = ItemMessageTypes::Command;
+	msg.ItemType = item->ItemType;
+	msg.ItemIndex = item->Index;
+	msg.Property = ItemProperties::Func;
+	msg.Value = SharedUtils::ConvertToItemValue(strValue,item->ItemType,msg.Property);
+    
+	_EventSubscriber->RASMessageReceived(msg);
+	SendMail(argMail.FromAddr,"Re:" + argMail.Subject + "(SET Result)","Command " + strCommand +" processed successfully");
+      }
+      else
+	HandleAnalyzeError(argMail,"Received command not valid for a SET Action, no Value parameter provided " + strCommand);	
+	
+    }
+    else
+      HandleAnalyzeError(argMail,"Received command for unknown Item " + strCommand);	
+  }  
+   
+  if(commandsFound == 0)
+    HandleAnalyzeError(argMail,"Message does no contain line with ##<instruction>## pattern !");
   
 }
 
@@ -235,7 +241,7 @@ void RASManager::HandleAnalyzeError(Email argMail, string argText)
 
 void RASManager::SendMail(string argReceiverEmail,string argSubject,string argBodyText)
 {
-  SMTPClient client;
+  SMTPClient client(_Logger);
   client.SendMail(argReceiverEmail,argSubject,argBodyText); 
   
 }

@@ -36,12 +36,17 @@ void * CULManager::ProcessingLoop()
     timeval lastRCVTime;
     int rcvCount;
     const uint16_t RCV_BUFF_LEN = 512;
-    uint8_t rcvBuff[RCV_BUFF_LEN];
+    char rcvBuff[RCV_BUFF_LEN];
     while(1)
     { 			
 	
 	//logTrace("Reading from CUL...") ;
 	rcvCount = read(_DeviceHandle,rcvBuff,RCV_BUFF_LEN);
+	if(rcvCount <= 0)
+	{
+	  usleep(100000);
+	  return 0;
+	}
 	
 	gettimeofday(&nowTime,NULL);
 	long diffSec = nowTime.tv_sec - lastRCVTime.tv_sec;
@@ -50,15 +55,18 @@ void * CULManager::ProcessingLoop()
 	  _ITfsm->Reset();
 	
 	lastRCVTime = nowTime;
-	ItemUpdateMessage newMsg;
-	bool telegramComplete = _ITfsm->Execute(rcvBuff,rcvCount,&newMsg);
+	ScadaItemMessage newMsg;
+	string strOut = "CULManager RCV:";
+	strOut += rcvBuff;
+	_Logger->Trace(strOut);
+	/*bool telegramComplete = _ITfsm->Execute(rcvBuff,rcvCount,&newMsg);
 	
 	if(telegramComplete)
 	{
 	  //TODO: MAybe Async
 	  if(_EventSubscriber != NULL)
 	    _EventSubscriber->CULMessageReceived(newMsg);
-	}
+	}*/
     }
     return 0;
 }
@@ -121,7 +129,8 @@ bool CULManager::InitCUL()
   
   
 
-  write(_DeviceHandle,"X18\n",4);    
+  //write(_DeviceHandle,"X18\n",4);
+  write(_DeviceHandle,"X01\n",4);
   write(_DeviceHandle,"V\n",2);
   usleep(1000000);
   uint8_t rcvBuff[255];
@@ -134,7 +143,7 @@ bool CULManager::InitCUL()
   }
   _Logger->Trace("CUL Init completed with Return " , rcvCount);  
   
-  newtio.c_cc[VMIN]=16;
+  newtio.c_cc[VMIN]=8;
   newtio.c_cc[VTIME]=0;
   tcflush(_DeviceHandle, TCIFLUSH);
   tcsetattr(_DeviceHandle,TCSANOW,&newtio);
@@ -147,7 +156,7 @@ bool CULManager::InitCUL()
 bool CULManager::Start()
 {
   
-  _Logger->Trace("Starting CULManager...");
+  _Logger->Log(LogTypes::Audit,"Starting CULManager...");
   bool success = true;
   if(success)
     success = InitCUL();

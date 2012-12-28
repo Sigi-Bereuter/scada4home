@@ -70,7 +70,7 @@ bool PLCManager::SendMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc
   write_reg[2] = MODBUS_GET_INT16_FROM_INT8(tab_int8, 4);
       
   
-  int msgSize = sizeof(ItemUpdateMessage);
+  int msgSize = sizeof(ScadaItemMessage);
   uint8_t wordCount = msgSize/2;
   if(msgSize % 2 != 0)
     wordCount++;
@@ -211,10 +211,10 @@ void PLCManager::ReadPLCMessages()
     _MsgReadindex = msgWritePos;        
   }
   
-  ItemUpdateMessage curMsg;
+  ScadaItemMessage curMsg;
   startAddr = 0x0005;	//Die ersten 5 Bytes sinf für Varibalen reserviert 
   offset = 0;
-  int msgSize = sizeof(ItemUpdateMessage);
+  int msgSize = sizeof(ScadaItemMessage);
   uint8_t wordCount = msgSize/2;
   if(msgSize % 2 != 0)
     wordCount++;
@@ -277,7 +277,7 @@ void * PLCManager::ProcessingLoop()
 
 bool PLCManager::Start()
 {
-  _Logger->Trace("Starting PLCManager...");
+  _Logger->Log(LogTypes::Audit,"Starting PLCManager...");
   bool success = OpenModBus();
   if(success)
     success = InitPLC();

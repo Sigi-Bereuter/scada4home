@@ -79,6 +79,7 @@ CMakeFiles/scada4home.dir/RASManager.o
  /home/besi/projects/Scada4Home/SharedTypes.h
  /home/besi/projects/Scada4Home/SharedUtils.h
 CMakeFiles/scada4home.dir/SMTPClient.o
+ /home/besi/projects/Scada4Home/LogTracer.h
  /home/besi/projects/Scada4Home/SMTPClient.cpp
  /home/besi/projects/Scada4Home/SMTPClient.h
 CMakeFiles/scada4home.dir/ScadaItem.o
@@ -86,6 +87,7 @@ CMakeFiles/scada4home.dir/ScadaItem.o
  /home/besi/projects/Scada4Home/ScadaItem.h
  /home/besi/projects/Scada4Home/SharedTypes.h
 CMakeFiles/scada4home.dir/SharedUtils.o
+ /home/besi/projects/Scada4Home/LogTracer.h
  /home/besi/projects/Scada4Home/SharedTypes.h
  /home/besi/projects/Scada4Home/SharedUtils.cpp
  /home/besi/projects/Scada4Home/SharedUtils.h

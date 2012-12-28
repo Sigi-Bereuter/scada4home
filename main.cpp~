@@ -1,7 +1,6 @@
 #include <iostream>
 #include "ControlManager.h"
 
-#include "SharedTypes.h"
 
 //BESI
 int main(int argc, char **argv) {

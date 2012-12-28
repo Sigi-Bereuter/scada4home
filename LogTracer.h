@@ -21,24 +21,31 @@
 #define LOGTRACER_H
 
 #include <iostream>
+#include <cstdarg>
 
 using namespace std;
 
+namespace LogTypes
+{
+  enum T {Error,Warning,Audit};
+}
+
 class LogTracer
 {
-private:
+  private:
+    static LogTracer* _Instance;
     bool _LogVerbose;
     pthread_mutex_t _LogMutex;
+    string GetCurrentDateTime();
 
   public:
     LogTracer();
-    virtual ~LogTracer();
-    void Trace(string argText);
-    void Trace(string argText1, int argText2);
-    void Trace(string argText1, string argText2);
-    void Trace(string argText1, int argText2,bool argHighLevel);
-    void Trace(string argText1, int argText2,int argText3);
+    virtual ~LogTracer();    
+       
+    void Trace(string argText, ...);
+    void Log(LogTypes::T argType,string argText, ...);   
     void SetLogLevel(bool argHigh);
+    static LogTracer* GetInstance();
   
 };
 

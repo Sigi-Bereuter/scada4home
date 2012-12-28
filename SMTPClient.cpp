@@ -27,9 +27,9 @@
 
 
 
-SMTPClient::SMTPClient()
+SMTPClient::SMTPClient(LogTracer * argLogger)
 {
-
+  _Logger = argLogger;
 }
 
 SMTPClient::~SMTPClient()
@@ -39,8 +39,10 @@ SMTPClient::~SMTPClient()
 
 void SMTPClient::SendSocket(string argText)
 {
-	write(_SocketHandle,argText.c_str(),argText.length());
-	write(1,argText.c_str(),argText.length());
+      if(argText != "\n")
+	_Logger->Trace("SMTPClient: SEND %s",argText.c_str());
+	
+      write(_SocketHandle,argText.c_str(),argText.length());      
 }
 
 /*=====Read a string from the socket=====*/
@@ -50,7 +52,7 @@ void SMTPClient::ReadSocket()
   char rcvBuffer[BUFSIZ+1];
   int len = read(_SocketHandle,rcvBuffer,BUFSIZ);	
   rcvBuffer[len] = 0;
-  printf("RCV: %s\n",rcvBuffer);
+  _Logger->Trace("SMTPClient: RCV %s",rcvBuffer);
 }
 
 void SMTPClient::SendMail(string argReceiverEmail,string argSubject,string argText)
@@ -67,7 +69,7 @@ void SMTPClient::SendMail(string argReceiverEmail,string argSubject,string argTe
   _SocketHandle = socket(AF_INET, SOCK_STREAM, 0);
   if (_SocketHandle==-1)
   {
-    perror("opening stream socket");
+    _Logger->Log(LogTypes::Error, "SMTPClient: failed opening stream socket");
     return;
   }
 
@@ -76,19 +78,19 @@ void SMTPClient::SendMail(string argReceiverEmail,string argSubject,string argTe
   hostent *hp = gethostbyname(host_id.c_str());
   if (hp==(struct hostent *) 0)
   {
-    fprintf(stderr, "%s: unknown host\n", host_id.c_str());
+    _Logger->Log(LogTypes::Error, "SMTPClient: unknown host %s", host_id.c_str());
     return;;
   }
 
   /*=====Connect to port 25 on remote host=====*/
-  printf ("hostent %s\n", hp->h_addr_list[0]);
+  _Logger->Trace("SMTPClient: host is %s", hp->h_addr_list[0]);
   memcpy((char *) &server.sin_addr, (char *) hp->h_addr, hp->h_length);
 
   server.sin_port=htons(25); /* SMTP PORT */
 
   if (connect(_SocketHandle, (struct sockaddr *) &server, sizeof server)==-1)
   {
-    perror("connecting stream socket");
+    _Logger->Log(LogTypes::Error,"SMTPClient: connecting stream socket failed");
     return;
   }
 

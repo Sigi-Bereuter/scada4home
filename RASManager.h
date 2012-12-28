@@ -25,6 +25,7 @@
 #include "LogTracer.h"
 #include "SharedTypes.h"
 #include "ItemRepository.h"
+#include <sys/time.h>
 
 class RASManager
 {

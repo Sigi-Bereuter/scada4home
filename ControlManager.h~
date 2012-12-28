@@ -30,7 +30,7 @@
 
 
 
-class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventSubscriber
+class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventSubscriber,IRASEventSubscriber
 {
   private:
     LogTracer *_Logger;

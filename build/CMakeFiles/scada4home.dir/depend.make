@@ -4,8 +4,11 @@
 CMakeFiles/scada4home.dir/CULManager.o: ../CULManager.cpp
 CMakeFiles/scada4home.dir/CULManager.o: ../CULManager.h
 CMakeFiles/scada4home.dir/CULManager.o: ../IntertechnoFSM.h
+CMakeFiles/scada4home.dir/CULManager.o: ../ItemRepository.h
 CMakeFiles/scada4home.dir/CULManager.o: ../LogTracer.h
+CMakeFiles/scada4home.dir/CULManager.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/CULManager.o: ../SharedTypes.h
+CMakeFiles/scada4home.dir/CULManager.o: ../SharedUtils.h
 
 CMakeFiles/scada4home.dir/CUNOEmulator.o: ../CUNOEmulator.cpp
 CMakeFiles/scada4home.dir/CUNOEmulator.o: ../CUNOEmulator.h

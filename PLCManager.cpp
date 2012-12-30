@@ -25,6 +25,7 @@ PLCManager::PLCManager(IPLCEventSubscriber *argEventSubscriber,LogTracer *argLog
      _Logger = argLogger;
      _EventSubscriber = argEventSubscriber;
      _ModBusMutex = PTHREAD_MUTEX_INITIALIZER;
+     _SendQueueMutex = PTHREAD_MUTEX_INITIALIZER;
      _MsgWriteIndex = 0;
      _MsgReadindex = -1;
 }
@@ -47,7 +48,15 @@ void PLCManager::IncrementWritePos()
   
 }
 
-bool PLCManager::SendMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc, uint8_t argSrcIdx, ItemProperties::T argProperty, uint16_t argValue)
+void PLCManager::Send(ScadaItemMessage argMsg)
+{
+  pthread_mutex_lock( &_SendQueueMutex );
+  _SendQueue.push(argMsg);
+  pthread_mutex_unlock( &_SendQueueMutex );
+}
+
+
+bool PLCManager::WriteMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc, uint8_t argSrcIdx, ItemProperties::T argProperty, uint16_t argValue)
 {
   bool result = true;
   
@@ -185,6 +194,25 @@ bool PLCManager::OpenModBus()
     return result;
 }
 
+void PLCManager::WritePLCMessages()
+{
+  
+  while(!_SendQueue.empty())
+  {
+    //Double Check-Lock Pattern
+    pthread_mutex_lock( &_SendQueueMutex );
+    if(!_SendQueue.empty())
+    {
+      WriteMessage(_SendQueue.front().MsgType,_SendQueue.front().ItemType,_SendQueue.front().ItemIndex,_SendQueue.front().Property,_SendQueue.front().Value);
+      _SendQueue.pop();
+    }
+    pthread_mutex_unlock( &_SendQueueMutex );
+    
+    usleep(50000); //Easy going, think about PLC
+  }  
+ 
+}
+
 
 
 void PLCManager::ReadPLCMessages()
@@ -192,8 +220,10 @@ void PLCManager::ReadPLCMessages()
   //Read MsgWritePOS from PLC
   int startAddr = 0x0000; 
   int offset = 0;	//Am ersten Word liegt der WriteIndex !
-  uint16_t read_reg[4];    
+  uint16_t read_reg[4];  
+  pthread_mutex_lock( &_ModBusMutex );
   int ret =modbus_read_registers(_ModbusProxy, startAddr + offset, 1, read_reg);    
+  pthread_mutex_unlock( &_ModBusMutex );
   if(ret == -1)	
   {
     _Logger->Trace("Error modbus_read_registers " , modbus_strerror(errno) );
@@ -228,7 +258,9 @@ void PLCManager::ReadPLCMessages()
     
     offset = _MsgReadindex * wordCount;
     
-    ret =modbus_read_registers(_ModbusProxy, startAddr + offset, wordCount, read_reg);  
+    pthread_mutex_lock( &_ModBusMutex );
+    ret =modbus_read_registers(_ModbusProxy, startAddr + offset, wordCount, read_reg);
+    pthread_mutex_unlock( &_ModBusMutex );
               
     curMsg.MsgType = (ItemMessageTypes::T)(read_reg[0] & 0xFF);
     curMsg.ItemType = (ItemTypes::T)(read_reg[0] >> 8);
@@ -263,13 +295,14 @@ void * PLCManager::ProcessingLoop()
         long diffUsec = nowTime.tv_usec - _LastAlivePing.tv_usec;
 	if(diffSec > 5 )
 	{	 
-	  SendMessage(ItemMessageTypes::Alive, ItemTypes::Dummy, 0,ItemProperties::Value,256);	
+	  WriteMessage(ItemMessageTypes::Alive, ItemTypes::Dummy, 0,ItemProperties::Value,256);	
 	  _LastAlivePing = nowTime;
 	}
 	
+	WritePLCMessages();
 	ReadPLCMessages();
 			
-	usleep(1000000);
+	usleep(100000);
 	
     }
     return 0;

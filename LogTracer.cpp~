@@ -23,8 +23,7 @@
 #include <iostream>
 
 LogTracer::LogTracer()
-{
-  std::cout << "Init LogTracer" << std::endl;
+{  
   //_LogMutex = PTHREAD_MUTEX_INITIALIZER;
   _Instance = this;
 }
@@ -62,7 +61,7 @@ void LogTracer::Log(LogTypes::T argType, string argText, ...)
   
   //pthread_mutex_lock( &_LogMutex );
   vprintf (strOut.c_str(), arguments);
- // pthread_mutex_unlock( &_LogMutex );
+  //pthread_mutex_unlock( &_LogMutex );
  
   va_end ( arguments );                  // Cleans up the list
 }
@@ -81,7 +80,7 @@ void LogTracer::Trace(string argText, ...)
    
   va_start ( arguments, argText );           // Initializing arguments to store all values after num
  
-  // pthread_mutex_lock( &_LogMutex );
+ // pthread_mutex_lock( &_LogMutex );
   vprintf (strOut.c_str(), arguments);
   //pthread_mutex_unlock( &_LogMutex );
  

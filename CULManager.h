@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <cstdio>
 #include "IntertechnoFSM.h"
+#include "ItemRepository.h"
 
 class CULManager
 {
@@ -35,10 +36,12 @@ class CULManager
     int _DeviceHandle;
     LogTracer *_Logger;
     pthread_t _ProcessingThread;
+    ItemRepository *_ItemRepo;
     IntertechnoFSM *_ITfsm;
     ICULEventSubscriber *_EventSubscriber;
     bool InitCUL();
     void * ProcessingLoop();
+    void HandleFS20(string argCULRcvString);
     static void *LaunchMemberFunction(void *obj)
     {
 	CULManager *targetObj = reinterpret_cast<CULManager *>(obj);
@@ -46,7 +49,7 @@ class CULManager
     }
     
   public:
-    CULManager(ICULEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+    CULManager(ICULEventSubscriber *argEventSubsciber,ItemRepository *argItemRepo,LogTracer *argLogger);
     bool Start();
     void Stop();
 

@@ -23,13 +23,13 @@ ControlManager::ControlManager()
 {
    std::cout << "Init Logtracer..." << std::endl;
    _Logger = new LogTracer();
-    std::cout << "Init ItemRepository 1..." << std::endl;
+   
    _Logger->Log(LogTypes::Audit, "Init ItemRepository...");
   _ItemRepo = new ItemRepository(_Logger);
    _Logger->Log(LogTypes::Audit, "Init PLCManager...");
   _PLC = new PLCManager(this,_Logger);
   _Logger->Log(LogTypes::Audit, "Init CULManager...");
-  _CUL = new CULManager(this,_Logger); 
+  _CUL = new CULManager(this,_ItemRepo, _Logger); 
   _Logger->Log(LogTypes::Audit, "Init HMIManager...");
   _HMI = new HMIManager(_ItemRepo,this,_Logger);
    _Logger->Log(LogTypes::Audit, "Init RASManager...");
@@ -53,8 +53,10 @@ bool ControlManager::Start()
   _PLC->Start();
   _CUL->Start();
   _HMI->Start();
-  _RAS->Start();
- 
+  _RAS->Start(); 
+  
+  usleep(1000000);
+  SyncPLCItems();  
   
 }
 
@@ -66,6 +68,23 @@ void ControlManager::Stop()
   _RAS->Stop();
 }
 
+void ControlManager::SyncPLCItems()
+{
+  
+  vector<ScadaItem *> items = _ItemRepo->GetItems();
+  for(vector<ScadaItem *>::iterator iter = items.begin();iter != items.end();++iter)
+  {
+    ScadaItemMessage msg;
+    msg.MsgType = ItemMessageTypes::StatusRequest;
+    msg.ItemType = (*iter)->ItemType;
+    msg.ItemIndex = (*iter)->Index;
+    msg.Property = ItemProperties::All;
+    msg.Value = 0;
+    _PLC->Send(msg);
+    usleep(1000000);
+  }  
+}
+
 void ControlManager::PLCMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received PLC_NewMessage Callback");
@@ -75,6 +94,8 @@ void ControlManager::PLCMessageReceived(ScadaItemMessage argMsg)
     if(item != NULL)
     {
       item->Properties[argMsg.Property] = argMsg.Value;
+      if(argMsg.Property == ItemProperties::Position)
+	_Logger->Trace("Item %d Position=%d",argMsg.ItemIndex,argMsg.Value);
     }
     
     _HMI->UpdateItemView(argMsg);
@@ -85,19 +106,19 @@ void ControlManager::PLCMessageReceived(ScadaItemMessage argMsg)
 void ControlManager::CULMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received CUL_NewMessage Callback");
-  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
+  _PLC->Send(argMsg);
 }
 
 void ControlManager::HMIMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received HMI_NewMessage Callback");  
-  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
+  _PLC->Send(argMsg);
 }
 
 void ControlManager::RASMessageReceived(ScadaItemMessage argMsg)
 {
   _Logger->Trace("Received RAS_NewMessage Callback");  
-  _PLC->SendMessage(argMsg.MsgType,argMsg.ItemType,argMsg.ItemIndex,argMsg.Property,argMsg.Value);
+  _PLC->Send(argMsg);
   
   
 }

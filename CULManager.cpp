@@ -18,11 +18,13 @@
 
 
 #include "CULManager.h"
+#include "SharedUtils.h"
 #include <sys/time.h>
 
 
-CULManager::CULManager(ICULEventSubscriber *argEventSubsciber, LogTracer *argLogger) 
+CULManager::CULManager(ICULEventSubscriber *argEventSubsciber,ItemRepository *argItemRepo, LogTracer *argLogger) 
 {  
+  _ItemRepo = argItemRepo;
   _Logger = argLogger;  
   _EventSubscriber = argEventSubsciber;
   _ITfsm = new IntertechnoFSM(argLogger);
@@ -51,26 +53,81 @@ void * CULManager::ProcessingLoop()
 	gettimeofday(&nowTime,NULL);
 	long diffSec = nowTime.tv_sec - lastRCVTime.tv_sec;
         long diffUsec = nowTime.tv_usec - lastRCVTime.tv_usec;
-	if(diffSec > 0 || diffUsec > 500000)
-	  _ITfsm->Reset();
+	//if(diffSec > 0 || diffUsec > 500000)
+	//  _ITfsm->Reset();
 	
 	lastRCVTime = nowTime;
-	ScadaItemMessage newMsg;
-	string strOut = "CULManager RCV:";
-	strOut += rcvBuff;
-	_Logger->Trace(strOut);
-	/*bool telegramComplete = _ITfsm->Execute(rcvBuff,rcvCount,&newMsg);
+	ScadaItemMessage newMsg;	
+	string strRCV(rcvBuff);	
+	_Logger->Trace("CULManager RCV:" + strRCV);
 	
-	if(telegramComplete)
+	if(rcvBuff[0] == 'F')
 	{
-	  //TODO: MAybe Async
-	  if(_EventSubscriber != NULL)
-	    _EventSubscriber->CULMessageReceived(newMsg);
-	}*/
+	  HandleFS20(strRCV);
+	}
+	
+	//bool telegramComplete = _ITfsm->Execute(rcvBuff,rcvCount,&newMsg);
+		
     }
     return 0;
 }
 
+void CULManager::HandleFS20(string argCULRcvString)
+{
+  string houseCode = argCULRcvString.substr(1,4);
+  string deviceCode = argCULRcvString.substr(5,2);
+  string cmdCode = argCULRcvString.substr(7,2);
+  
+  if(houseCode != "D14B")
+  {
+    _Logger->Trace("CULManager: Unknown FS20 HouseCode %s",houseCode.c_str());
+    return;
+  } 
+  
+  ScadaItem *item = _ItemRepo->GetItem(deviceCode);
+  if(item == NULL)
+  {
+     _Logger->Trace("CULManager: Unknown FS20 Device %s no Item-Config found for this",deviceCode.c_str());
+    return;    
+  }
+  
+  ScadaItemMessage newMsg;
+  newMsg.MsgType = ItemMessageTypes::Command;
+  newMsg.ItemType = item->ItemType;
+  newMsg.ItemIndex = item->Index;
+  newMsg.Property = ItemProperties::Func;
+  
+  if(item->ItemType == ItemTypes::Switch)
+  {
+    if(cmdCode == "00")
+      newMsg.Value = 1;
+    else if(cmdCode == "01")
+       newMsg.Value = 0;
+    else if(cmdCode == "10")
+       newMsg.Value = 3;
+    else if(cmdCode == "11")
+       newMsg.Value = 2;
+    else if(cmdCode == "13")
+       newMsg.Value = 13;
+    else if(cmdCode == "14")
+       newMsg.Value = 14;
+    else 
+    {
+       _Logger->Trace("CULManager: CommandCode %s is unhandled for ItemType %d (as FS20-Device %s) yet ",cmdCode.c_str(), item->ItemType,deviceCode.c_str());
+       return; 
+    }
+    
+  }
+  else
+  {
+     _Logger->Trace("CULManager: ItemType %d (as FS20-Device %s) is unhandled for FS20 Devices yet ",item->ItemType,deviceCode.c_str());
+    return; 
+  }
+    
+  if(_EventSubscriber != NULL)
+	    _EventSubscriber->CULMessageReceived(newMsg);
+    
+}
 
 
 
@@ -152,6 +209,7 @@ bool CULManager::InitCUL()
   
   return true;
 }
+
 
 bool CULManager::Start()
 {

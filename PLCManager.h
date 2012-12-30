@@ -25,6 +25,7 @@
 #include <errno.h>
 #include "LogTracer.h"
 #include "SharedTypes.h"
+#include <queue>
 
  
 
@@ -35,17 +36,21 @@ class PLCManager
      modbus_t *_ModbusProxy;
      LogTracer *_Logger;
      pthread_mutex_t _ModBusMutex;
+     pthread_mutex_t _SendQueueMutex;
      uint16_t _MsgWriteIndex;
      int16_t _MsgReadindex;
      timeval _LastSendTime;
      timeval _LastAlivePing;
      pthread_t _ProcessingThread; 
      IPLCEventSubscriber *_EventSubscriber;
+     queue<ScadaItemMessage> _SendQueue;
      void ReadPLCMessages();
+     void WritePLCMessages();
      bool OpenModBus();
      bool InitPLC();
      bool CloseModBus();
      void IncrementWritePos();   
+     bool WriteMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc,uint8_t argSrcIdx,ItemProperties::T,uint16_t argValue);
      static void *LaunchMemberFunction(void *obj)
      {
 	PLCManager *targetObj = reinterpret_cast<PLCManager *>(obj);
@@ -58,7 +63,7 @@ class PLCManager
   public:
      PLCManager(IPLCEventSubscriber *argEventSubsciber,LogTracer *argLogger);
      ~PLCManager();
-     bool SendMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSrc,uint8_t argSrcIdx,ItemProperties::T,uint16_t argValue);
+     void Send(ScadaItemMessage argMsg);     
      bool Start();
      void Stop();
      void * ProcessingLoop();

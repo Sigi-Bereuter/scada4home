@@ -39,6 +39,7 @@ class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventS
     HMIManager *_HMI;
     RASManager * _RAS;
     ItemRepository *_ItemRepo;
+    void SyncPLCItems();
     void PLCMessageReceived(ScadaItemMessage argMsg);
     void CULMessageReceived(ScadaItemMessage argMsg);
     void HMIMessageReceived(ScadaItemMessage argMsg);

@@ -50,6 +50,11 @@ static void InitItemUpdateEvent()
 
 static void SetItemUpdateEvent()
 {
+  int semVal = 0;
+  sem_getvalue(&ItemUpdateEvent, &semVal);
+  if(semVal > 1)
+    return;
+  
   if (sem_post(&ItemUpdateEvent) == -1)
   {
     LogTracer::GetInstance()->Log(LogTypes::Error,"sem_post for Semaphore ItemUpdateEvent failed");
@@ -69,7 +74,9 @@ static void WaitItemUpdateEvent()
   while ((s = sem_timedwait(&ItemUpdateEvent, &ts)) == -1 && errno == EINTR)
     continue;       /* Restart if interrupted by handler */
     
-  LogTracer::GetInstance()->Trace("Waiting completed, returning LongPolling request");
+  //int semVal = 0;
+  //sem_getvalue(&ItemUpdateEvent, &semVal);
+  LogTracer::GetInstance()->Trace("Waiting for ItemUpdateEvent completed ");
 }
 
 
@@ -128,7 +135,9 @@ string HMIManager::GetIconForItemValue(int16_t argItemValue,ItemProperties::T ar
     {
       stringstream ssIconname;
       int percentVal = 100*argItemValue/255;
-      int16_t val = 10*(percentVal/10); //Maxwert in PLC ist 255 Ausgabe ist in Prozent !
+      int16_t val = 100 - 10*(percentVal/10); //Maxwert in PLC ist 255 Ausgabe ist in Prozent !
+      if(argItemValue > 0 && val == 100)
+	val = 90;
       ssIconname << "rollershutter-" << val;
       return ssIconname.str();
     }    
@@ -373,9 +382,11 @@ static void *WebServerCallback(enum mg_event event,struct mg_connection *conn)
     if (xHeader != NULL) 
     { 
       if(strcmp(xHeader,"long-polling") == 0)
-      {	
-	isLongPolling = true;	
-	WaitItemUpdateEvent();	
+      {			
+	WaitItemUpdateEvent();
+	//Let WebClients not update more then once a second
+	//Note: This is mostly because of the fact that greentUI only supports 256 request per page (once loaded)
+	usleep(1000000);
       }
     }
      

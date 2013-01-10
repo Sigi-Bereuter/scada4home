@@ -52,7 +52,7 @@ static void SetItemUpdateEvent()
 {
   int semVal = 0;
   sem_getvalue(&ItemUpdateEvent, &semVal);
-  if(semVal > 1)
+  if(semVal == 1)
     return;
   
   if (sem_post(&ItemUpdateEvent) == -1)
@@ -60,16 +60,19 @@ static void SetItemUpdateEvent()
     LogTracer::GetInstance()->Log(LogTypes::Error,"sem_post for Semaphore ItemUpdateEvent failed");
   }
   else
-    LogTracer::GetInstance()->Trace("Semaphore ItemUpdateEvent is set");
+    LogTracer::GetInstance()->Trace("Semaphore ItemUpdateEvent is set, Semaphore=%d",semVal);
 }
 
 static void WaitItemUpdateEvent()
 {
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
-  ts.tv_sec += 60;
+  ts.tv_sec += 30;
   int s=0;
-  LogTracer::GetInstance()->Trace("LongPolling request waiting for ItemUpdateEvent..." );  
+  int semVal = 0;
+  sem_getvalue(&ItemUpdateEvent, &semVal);
+  
+  LogTracer::GetInstance()->Trace("LongPolling request waiting for ItemUpdateEvent Semaphore=%d...",semVal );  
   
   while ((s = sem_timedwait(&ItemUpdateEvent, &ts)) == -1 && errno == EINTR)
     continue;       /* Restart if interrupted by handler */

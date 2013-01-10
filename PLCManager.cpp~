@@ -163,13 +163,13 @@ bool PLCManager::CloseModBus()
 bool PLCManager::OpenModBus()
 {
     bool result = true;
-    const char* ipAddress = "192.168.1.106";
+    const char* ipAddress = "192.168.1.102";
     int port = 502;
     _ModbusProxy = modbus_new_tcp( ipAddress, port);
     
     //modbus_set_debug(_ModbusProxy,true);
     
-    _Logger->Trace( "Connecting to Modbus device at",ipAddress);
+    _Logger->Trace( "Connecting to Modbus device at %s",ipAddress);
     int success = modbus_connect(_ModbusProxy);
     if(success == -1)
     {
@@ -197,8 +197,9 @@ bool PLCManager::OpenModBus()
 void PLCManager::WritePLCMessages()
 {
   
-  while(true)
+  while(!_SendQueue.empty())
   {
+    //Double Check-Lock Pattern
     pthread_mutex_lock( &_SendQueueMutex );
     if(!_SendQueue.empty())
     {

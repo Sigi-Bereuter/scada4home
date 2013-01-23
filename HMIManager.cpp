@@ -83,8 +83,9 @@ static void WaitItemUpdateEvent()
 }
 
 
-HMIManager::HMIManager(ItemRepository *argItemRepo,IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger)
+HMIManager::HMIManager(ItemRepository *argItemRepo,IHMIEventSubscriber *argEventSubsciber,string argWebServerPort,LogTracer *argLogger)
 {
+  _WebServerPort = argWebServerPort;
   _Logger = argLogger;
   _EventSubscriber = argEventSubsciber;
   _ItemRepo = argItemRepo;
@@ -476,7 +477,7 @@ bool HMIManager::InitWebserver()
   bool success = true;  
   _Logger->Log(LogTypes::Audit,"Strating InitWebserver...");    
   InitItemUpdateEvent();
-  const char *options[] = {"document_root", "greent","listening_ports", "8081","num_threads", "5",NULL};
+  const char *options[] = {"document_root", "greent","listening_ports", _WebServerPort.c_str(),"num_threads", "5",NULL};
   _Webserver = mg_start(&WebServerCallback, NULL, options);    
   return success;  
 }

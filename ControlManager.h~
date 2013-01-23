@@ -39,6 +39,10 @@ class ControlManager : public IPLCEventSubscriber,ICULEventSubscriber,IHMIEventS
     HMIManager *_HMI;
     RASManager * _RAS;
     ItemRepository *_ItemRepo;
+    std::map<string,string>  _ConfigMap;
+    bool _InitCfgOK;
+    bool InitConfig();
+    void SyncPLCItems();
     void PLCMessageReceived(ScadaItemMessage argMsg);
     void CULMessageReceived(ScadaItemMessage argMsg);
     void HMIMessageReceived(ScadaItemMessage argMsg);

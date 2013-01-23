@@ -18,22 +18,54 @@
 
 
 #include "ControlManager.h"
+#include "SharedUtils.h"
 
 ControlManager::ControlManager()
 {
+   string CFG_PLC_IPADRESS = "plc_ipaddress";
+   string CFG_CUL_DEVICENAME = "cul_devicename";
+   string CFG_HMI_WEBSERVER_PORT = "hmi_webserver_port";
+   
    std::cout << "Init Logtracer..." << std::endl;
    _Logger = new LogTracer();
+   _Logger->Log(LogTypes::Audit, "LogTracer initilized successfully !");
+   
+   _Logger->Log(LogTypes::Audit, "Init Config...");
+   bool cfgOK = InitConfig();
+   if(!cfgOK)
+   {
+     _Logger->Log(LogTypes::Error, "InitConfig failed, cannot go on!");
+     _InitCfgOK = false; 
+     return;
+   }
    
    _Logger->Log(LogTypes::Audit, "Init ItemRepository...");
-  _ItemRepo = new ItemRepository(_Logger);
+   _ItemRepo = new ItemRepository(_Logger);
+      
    _Logger->Log(LogTypes::Audit, "Init PLCManager...");
-  _PLC = new PLCManager(this,_Logger);
-  _Logger->Log(LogTypes::Audit, "Init CULManager...");
-  _CUL = new CULManager(this,_ItemRepo, _Logger); 
-  _Logger->Log(LogTypes::Audit, "Init HMIManager...");
-  _HMI = new HMIManager(_ItemRepo,this,_Logger);
+   std::map<string,string>::iterator result = _ConfigMap.find(CFG_PLC_IPADRESS);
+   if(result == _ConfigMap.end())   
+      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_PLC_IPADRESS.c_str());  
+   else     
+      _PLC = new PLCManager(this,(*result).second, _Logger);
+   
+   _Logger->Log(LogTypes::Audit, "Init CULManager...");
+   result = _ConfigMap.find(CFG_CUL_DEVICENAME);
+   if(result == _ConfigMap.end())   
+      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_CUL_DEVICENAME.c_str());  
+   else     
+      _CUL = new CULManager(this,_ItemRepo,(*result).second, _Logger); 
+   
+   _Logger->Log(LogTypes::Audit, "Init HMIManager...");
+   result = _ConfigMap.find(CFG_HMI_WEBSERVER_PORT);
+   if(result == _ConfigMap.end())   
+      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_HMI_WEBSERVER_PORT.c_str());  
+   else     
+      _HMI = new HMIManager(_ItemRepo,this,(*result).second,_Logger);
+   
+   
    _Logger->Log(LogTypes::Audit, "Init RASManager...");
-  _RAS = new RASManager(_ItemRepo,this,_Logger);
+   _RAS = new RASManager(_ItemRepo,this,_Logger);
 
 }
 
@@ -42,9 +74,70 @@ ControlManager::~ControlManager()
   
 }
 
+bool ControlManager::InitConfig()
+{
+  bool success = true;
+  
+  FILE *f;  
+  string cfgFilePath = "scada4home.cfg";
+  if((f=fopen(cfgFilePath.c_str(),"r"))==NULL)
+  {
+    _Logger->Log(LogTypes::Error, "Unable to open config file % s",cfgFilePath.c_str());
+    return false;
+  }
+  
+  fseek(f, 0, SEEK_END);
+  long int size = ftell(f);
+  rewind(f); 
+  const int arrsize = 32000;
+  if(size > arrsize)
+    _Logger->Log(LogTypes::Error,"Content Size of config file %s (%i bytes) does not match the reserved array size (%d bytes): ",cfgFilePath.c_str(),size,arrsize);
+  char strContent[arrsize];
+  int len = fread(strContent,1,size,f);
+  fclose(f);    
+  if(len <= 0)
+  {
+     _Logger->Log(LogTypes::Error,"Config file %s is empty",cfgFilePath.c_str());
+     return false;
+  }
+  strContent[len] = 0; //Null termination	
+  
+  vector<string> cfgLines;
+  SharedUtils::Tokenize(strContent,cfgLines,"\r\n");	
+  if(cfgLines.size() == 0)
+  {
+     _Logger->Log(LogTypes::Error,"Config file %s does not contain lines (terminated by crlf)",cfgFilePath.c_str());
+     return false;
+  }
+  
+  for(vector<string>::iterator iter = cfgLines.begin(); iter!=cfgLines.end(); ++iter)
+  {
+    string curLine = (*iter);
+    string searchStr = "=";
+    int sPos = curLine.find(searchStr);  
+    if(sPos <= 0)
+    {
+       _Logger->Log(LogTypes::Error,"Config file contains line without key-value separator (=)  %s ",curLine.c_str());
+      success = false;
+      continue;
+    }
+    string cfgKey = curLine.substr(0,sPos);
+    string cfgVal = curLine.substr(sPos+1,curLine.size()-sPos-1);
+    _ConfigMap[cfgKey] = cfgVal;    
+  }
+  
+  return success;  
+}
+
 bool ControlManager::Start()
 {
   _Logger->SetLogLevel(true);
+  
+  if(!_InitCfgOK)
+  {
+    _Logger->Log(LogTypes::Error, "Starting ControlManager not possible because InitConfig failed!");
+    return false;
+  }
   
   _Logger->Log(LogTypes::Audit, "Starting ControlManager...");
   _Logger->Log(LogTypes::Audit, "Loading ItemRepository...");

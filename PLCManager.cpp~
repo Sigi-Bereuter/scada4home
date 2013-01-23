@@ -20,9 +20,10 @@
 #include "PLCManager.h"
 #include "SharedTypes.h"
 
-PLCManager::PLCManager(IPLCEventSubscriber *argEventSubscriber,LogTracer *argLogger)
+PLCManager::PLCManager(IPLCEventSubscriber *argEventSubscriber,string argIpAddress,LogTracer *argLogger)
 {
      _Logger = argLogger;
+     _DeviceIpAddress = argIpAddress;
      _EventSubscriber = argEventSubscriber;
      _ModBusMutex = PTHREAD_MUTEX_INITIALIZER;
      _SendQueueMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -162,14 +163,13 @@ bool PLCManager::CloseModBus()
 
 bool PLCManager::OpenModBus()
 {
-    bool result = true;
-    const char* ipAddress = "192.168.1.102";
+    bool result = true;    
     int port = 502;
-    _ModbusProxy = modbus_new_tcp( ipAddress, port);
+    _ModbusProxy = modbus_new_tcp( _DeviceIpAddress.c_str(), port);
     
     //modbus_set_debug(_ModbusProxy,true);
     
-    _Logger->Trace( "Connecting to Modbus device at %s",ipAddress);
+    _Logger->Trace( "Connecting to Modbus device at %s",_DeviceIpAddress);
     int success = modbus_connect(_ModbusProxy);
     if(success == -1)
     {

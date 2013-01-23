@@ -36,6 +36,7 @@ class PLCManager
      modbus_t *_ModbusProxy;
      LogTracer *_Logger;
      pthread_mutex_t _ModBusMutex;
+     pthread_mutex_t _SendQueueMutex;
      uint16_t _MsgWriteIndex;
      int16_t _MsgReadindex;
      timeval _LastSendTime;
@@ -44,6 +45,7 @@ class PLCManager
      IPLCEventSubscriber *_EventSubscriber;
      queue<ScadaItemMessage> _SendQueue;
      void ReadPLCMessages();
+     void WritePLCMessages();
      bool OpenModBus();
      bool InitPLC();
      bool CloseModBus();

@@ -27,6 +27,7 @@ CMakeFiles/scada4home.dir/ControlManager.o
  /home/besi/projects/Scada4Home/SMTPClient.h
  /home/besi/projects/Scada4Home/ScadaItem.h
  /home/besi/projects/Scada4Home/SharedTypes.h
+ /home/besi/projects/Scada4Home/SharedUtils.h
  /home/besi/projects/Scada4Home/mongoose.h
  /usr/local/include/modbus/modbus-rtu.h
  /usr/local/include/modbus/modbus-tcp.h

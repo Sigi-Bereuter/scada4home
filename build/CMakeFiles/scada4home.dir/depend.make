@@ -26,6 +26,7 @@ CMakeFiles/scada4home.dir/ControlManager.o: ../RASManager.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../SMTPClient.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../ScadaItem.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../SharedTypes.h
+CMakeFiles/scada4home.dir/ControlManager.o: ../SharedUtils.h
 CMakeFiles/scada4home.dir/ControlManager.o: ../mongoose.h
 CMakeFiles/scada4home.dir/ControlManager.o: /usr/local/include/modbus/modbus-rtu.h
 CMakeFiles/scada4home.dir/ControlManager.o: /usr/local/include/modbus/modbus-tcp.h

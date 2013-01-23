@@ -22,8 +22,9 @@
 #include <sys/time.h>
 
 
-CULManager::CULManager(ICULEventSubscriber *argEventSubsciber,ItemRepository *argItemRepo, LogTracer *argLogger) 
+CULManager::CULManager(ICULEventSubscriber *argEventSubsciber,ItemRepository *argItemRepo,string argDeviceName, LogTracer *argLogger) 
 {  
+  _DeviceName = argDeviceName;
   _ItemRepo = argItemRepo;
   _Logger = argLogger;  
   _EventSubscriber = argEventSubsciber;
@@ -139,19 +140,18 @@ bool CULManager::InitCUL()
   _Logger->Trace("Init CUL..." );   
   
   const uint16_t RCV_BUFF_LEN = 512;
-  const int BAUDRATE = 17;   //Kommt zustande via Macro BAUDRATE B38400;
-  const char* MODEMDEVICE = "/dev/ttyACM0";  
+  const int BAUDRATE = 17;   //Kommt zustande via Macro BAUDRATE B38400;   
   const int FALSE = 0;
   const int TRUE = 1;
 
 
   /* open the device to be non-blocking (read will return immediatly) */
   /*fd = open(MODEMDEVICE, O_RDWR | O_NOCTTY | O_NONBLOCK);*/
-  _DeviceHandle = open(MODEMDEVICE, O_RDWR | O_NOCTTY);
+  _DeviceHandle = open(_DeviceName.c_str(), O_RDWR | O_NOCTTY);
   if (_DeviceHandle <0) 
   {
-    perror(MODEMDEVICE); 
-    _Logger->Trace("Open Device failed",MODEMDEVICE );   
+    perror(_DeviceName.c_str()); 
+    _Logger->Trace("Open Device failed",_DeviceName.c_str() );   
     return false;     
   }
 

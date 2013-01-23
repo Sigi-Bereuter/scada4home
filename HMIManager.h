@@ -34,7 +34,8 @@ class HMIManager
   private:
     LogTracer *_Logger;
     IHMIEventSubscriber *_EventSubscriber;
-    mg_context *_Webserver;    
+    mg_context *_Webserver;   
+    string _WebServerPort;
     static HMIManager *_Instance;
     std::map<string,ScadaItem*> _HmiToScadaMappings;    
     ItemRepository *_ItemRepo;
@@ -51,7 +52,7 @@ class HMIManager
   public:    
     static HMIManager *GetInstance();
     virtual ~HMIManager();
-    HMIManager(ItemRepository *argItemRepo, IHMIEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+    HMIManager(ItemRepository *argItemRepo, IHMIEventSubscriber *argEventSubsciber,string argWebServerPort,LogTracer *argLogger);
     bool Start();
     void Stop();
     int GetMessagCount();

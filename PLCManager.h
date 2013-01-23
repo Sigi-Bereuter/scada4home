@@ -34,6 +34,7 @@ class PLCManager
 {
   private:
      modbus_t *_ModbusProxy;
+     string _DeviceIpAddress;
      LogTracer *_Logger;
      pthread_mutex_t _ModBusMutex;
      pthread_mutex_t _SendQueueMutex;
@@ -61,7 +62,7 @@ class PLCManager
      
      
   public:
-     PLCManager(IPLCEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+     PLCManager(IPLCEventSubscriber *argEventSubsciber,string argIpAddress,LogTracer *argLogger);
      ~PLCManager();
      void Send(ScadaItemMessage argMsg);     
      bool Start();

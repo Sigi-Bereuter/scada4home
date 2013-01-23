@@ -34,6 +34,7 @@ class CULManager
     
     termios _OldTIO;
     int _DeviceHandle;
+    string _DeviceName;
     LogTracer *_Logger;
     pthread_t _ProcessingThread;
     ItemRepository *_ItemRepo;
@@ -49,7 +50,7 @@ class CULManager
     }
     
   public:
-    CULManager(ICULEventSubscriber *argEventSubsciber,ItemRepository *argItemRepo,LogTracer *argLogger);
+    CULManager(ICULEventSubscriber *argEventSubsciber,ItemRepository *argItemRepo,string argDeviceName,LogTracer *argLogger);
     bool Start();
     void Stop();
 

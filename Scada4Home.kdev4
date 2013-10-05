@@ -1,4 +1,4 @@
 [Project]
-Name=Scada4Home
 Manager=KDevCMakeManager
+Name=Scada4Home2
 VersionControl=kdevgit

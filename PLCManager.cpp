@@ -101,7 +101,10 @@ bool PLCManager::WriteMessage(ItemMessageTypes::T argMsgType, ItemTypes::T argSr
     result = false;
   }
   else
+  {
+    _Logger->Trace("PlcManager WriteMessage suceeded for Type %i ",argMsgType);
     gettimeofday(&_LastSendTime, NULL);
+  }
 	
   IncrementWritePos();
   

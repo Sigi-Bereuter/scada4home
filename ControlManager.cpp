@@ -37,7 +37,7 @@ ControlManager::ControlManager()
      _Logger->Log(LogTypes::Error, "InitConfig failed, cannot go on!");     
      return;
    }
-   
+      
    _Logger->Log(LogTypes::Audit, "Init ItemRepository...");
    _ItemRepo = new ItemRepository(_Logger);
       
@@ -65,7 +65,8 @@ ControlManager::ControlManager()
    
    _Logger->Log(LogTypes::Audit, "Init RASManager...");
    _RAS = new RASManager(_ItemRepo,this,_Logger);
-
+   
+   
 }
 
 ControlManager::~ControlManager()
@@ -130,7 +131,7 @@ bool ControlManager::InitConfig()
 
 bool ControlManager::Start()
 {
-  _Logger->SetLogLevel(true);
+  _Logger->SetLogLevel(false);
   
   if(!_InitCfgOK)
   {

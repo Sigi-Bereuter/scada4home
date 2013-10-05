@@ -174,7 +174,7 @@ void HMIManager::UpdateItemView(ScadaItemMessage argMsg)
   int widgetIdPos = _SiteMaps[item->SiteMap].find(ssWidgetId.str());  
   if(widgetIdPos == string::npos)
   {
-     _Logger->Log(LogTypes::Warning, "WidgetId not found in SiteMap %s for itemIndex %d ",item->SiteMap.c_str(),argMsg.ItemIndex);
+     _Logger->Log(LogTypes::Warning, "WidgetId %s not found in SiteMap %s for itemIndex %d ",item->WidgetId.c_str(),item->SiteMap.c_str(),argMsg.ItemIndex);
      return;
   }
   int labelStartPos = _SiteMaps[item->SiteMap].find(strLabel,widgetIdPos);

@@ -118,6 +118,8 @@ void Pop3Client::login(const std::string& user,const std::string& passwd) {
  */
 std::string Pop3Client::sendReceive(const std::string& message) {
 	// send
+	_Logger->Trace("POP3Client SEND: " + message);
+	
 	int result = send(sockfd, message.c_str(), message.length(), 0);
 	if (result == -1) {
 		_Logger->Log(LogTypes::Error,"POP3Client: Message can't be sent");
@@ -130,12 +132,16 @@ std::string Pop3Client::sendReceive(const std::string& message) {
 		_Logger->Log(LogTypes::Error,"POP3Client: Message can't be received");
 		close(sockfd);
 	}
+	
+	std::string response = (std::string)buffer;
+	_Logger->Trace("POP3Client RECV: " + response);
 
 	// we've got the message, now check it
-	std::string response = (std::string)buffer;
+	
 	if (! analyzeMessage(response)) {
 		_Logger->Log(LogTypes::Error,"POP3Client: Error response");
 	}
+	
 
 	return response;
 }
@@ -147,7 +153,8 @@ std::string Pop3Client::sendReceive(const std::string& message) {
 bool Pop3Client::analyzeMessage(std::string& msg) const {
 	// +OK
 	if (msg.find("+OK") != std::string::npos) {
-		if (msg.substr(0,3) == "+OK") {	//		we need to be sure +OK is at the beginning
+		if (msg.substr(0,3) == "+OK" || msg.substr(3,3) == "+OK")
+		{	//		we need to be sure +OK is at the beginning (or after a laedaing .\r\n
 			return true;
 		}
 		else {
@@ -217,8 +224,8 @@ void Pop3Client::listMails(vector<int>& argMsgIdList)
 {
 	std::string result = "";
 
-	sendReceive("LIST\n");	// status message
-	receiveMessage(result);	// data
+	result = sendReceive("LIST\n");	// status message
+	//receiveMessage(result);	// data
 
 	if (result.length() == 3) {	// = ".CRLF"
 		_Logger->Trace("POP3Client: No new messages");
@@ -233,8 +240,13 @@ void Pop3Client::listMails(vector<int>& argMsgIdList)
 	vector<string> msgList;
 	SharedUtils::Tokenize(result,msgList,"\n");	
 	for(vector<string>::iterator iter = msgList.begin(); iter!=msgList.end(); ++iter)
-	{
+	{	  
 	  string curLine = (*iter);
+	  //Erste Zeile ist Statusmeldung
+	  string start = curLine.substr(0,3);
+	  if(start.compare("+OK") == 0)
+	    continue;	    
+	  
 	  int numEnd = curLine.find_first_of(' ');
 	  curLine[numEnd] = 0;
 	  int msgId = atoi(curLine.c_str());

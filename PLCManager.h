@@ -45,8 +45,8 @@ class PLCManager
      pthread_t _ProcessingThread; 
      IPLCEventSubscriber *_EventSubscriber;
      queue<ScadaItemMessage> _SendQueue;
-     void ReadPLCMessages();
-     void WritePLCMessages();
+     bool ReadPLCMessages();
+     bool WritePLCMessages();
      bool OpenModBus();
      bool InitPLC();
      bool CloseModBus();

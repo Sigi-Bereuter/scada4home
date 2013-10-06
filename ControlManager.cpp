@@ -25,10 +25,15 @@ ControlManager::ControlManager()
    string CFG_PLC_IPADRESS = "plc_ipaddress";
    string CFG_CUL_DEVICENAME = "cul_devicename";
    string CFG_HMI_WEBSERVER_PORT = "hmi_webserver_port";
+   string CFG_POP3_SERVER = "pop3_server";
+   string CFG_POP3_USER = "pop3_user";
+   string CFG_POP3_PASSWORD= "pop3_password";
+   string CFG_LOG_LEVEL = "log_level";
    
    std::cout << "Init Logtracer..." << std::endl;
    _Logger = new LogTracer();
-   _Logger->Log(LogTypes::Audit, "LogTracer initilized successfully !");
+   _Logger->SetLogLevel(true); 
+      
    
    _Logger->Log(LogTypes::Audit, "Init Config...");
    _InitCfgOK = InitConfig();
@@ -37,12 +42,30 @@ ControlManager::ControlManager()
      _Logger->Log(LogTypes::Error, "InitConfig failed, cannot go on!");     
      return;
    }
+   
+   std::map<string,string>::iterator result = _ConfigMap.find(CFG_LOG_LEVEL);
+   bool logLevelLow = true;
+   if(result != _ConfigMap.end())
+   {
+     string strVal = (*result).second;
+     logLevelLow = ((strVal.compare("0") == 0));     
+   }
+   if(logLevelLow)
+   {
+      _Logger->Log(LogTypes::Audit, "LogTracer initialized successfully, Loglevel = Low !");
+      _Logger->SetLogLevel(false); 
+   }
+   else
+   {
+     _Logger->Log(LogTypes::Audit, "LogTracer initialized successfully, Loglevel =  Verbose");
+     _Logger->SetLogLevel(true); 
+   }
       
    _Logger->Log(LogTypes::Audit, "Init ItemRepository...");
    _ItemRepo = new ItemRepository(_Logger);
       
    _Logger->Log(LogTypes::Audit, "Init PLCManager...");
-   std::map<string,string>::iterator result = _ConfigMap.find(CFG_PLC_IPADRESS);
+   result = _ConfigMap.find(CFG_PLC_IPADRESS);
    if(result == _ConfigMap.end())   
       _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_PLC_IPADRESS.c_str());  
    else     
@@ -64,9 +87,31 @@ ControlManager::ControlManager()
    
    
    _Logger->Log(LogTypes::Audit, "Init RASManager...");
-   _RAS = new RASManager(_ItemRepo,this,_Logger);
-   
-   
+   string pop3Server="";
+   string pop3User= "";
+   string pop3Password="";
+   result = _ConfigMap.find(CFG_POP3_SERVER);
+   if(result == _ConfigMap.end())   
+      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_POP3_SERVER.c_str());  
+   else
+   {
+     pop3Server = (*result).second;
+     result = _ConfigMap.find(CFG_POP3_USER);
+     if(result == _ConfigMap.end())   
+	_Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_POP3_USER.c_str());  
+     else
+     {
+       pop3User = (*result).second;
+       result = _ConfigMap.find(CFG_POP3_PASSWORD);
+       if(result == _ConfigMap.end())   
+	  _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_POP3_PASSWORD.c_str());  
+       else
+       {
+	 pop3Password =  (*result).second;
+	  _RAS = new RASManager(_ItemRepo,this,pop3Server,pop3User,pop3Password,_Logger);
+       }
+     }
+   }     
 }
 
 ControlManager::~ControlManager()
@@ -131,7 +176,6 @@ bool ControlManager::InitConfig()
 
 bool ControlManager::Start()
 {
-  _Logger->SetLogLevel(false);
   
   if(!_InitCfgOK)
   {

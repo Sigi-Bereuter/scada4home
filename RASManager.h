@@ -30,7 +30,9 @@
 class RASManager
 {
   private:
-    Pop3Client *_POP3Client;  
+    string _POP3Server;
+    string _POP3User;
+    string _POP3Password;
     SMTPClient *_SMTPClient;
     timeval _LastPop3Fetch;
     LogTracer *_Logger;
@@ -52,7 +54,7 @@ class RASManager
     bool Start();
     void Stop();
     void * ProcessingLoop();
-    RASManager(ItemRepository *argItemRepo,IRASEventSubscriber *argEventSubsciber,LogTracer *argLogger);
+    RASManager(ItemRepository *argItemRepo,IRASEventSubscriber *argEventSubsciber,string argPOP3Server,string argPOP3User,string argPOP3Password,LogTracer *argLogger);
     virtual ~RASManager();
 };
 

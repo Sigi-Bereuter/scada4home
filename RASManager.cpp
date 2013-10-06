@@ -25,12 +25,14 @@
 #include <sstream>
 
 
-RASManager::RASManager(ItemRepository *argItemRepo,IRASEventSubscriber *argEventSubsciber,LogTracer *argLogger)
+RASManager::RASManager(ItemRepository *argItemRepo,IRASEventSubscriber *argEventSubsciber,string argPOP3Server,string argPOP3User,string argPOP3Password,LogTracer *argLogger)
 {
   _EventSubscriber = argEventSubsciber;
   _Logger = argLogger;
   _ItemRepo = argItemRepo;
-  //_POP3Client = new Pop3Client("mail.bereuter.com",110);
+  _POP3Server = argPOP3Server;
+  _POP3User = argPOP3User;
+  _POP3Password= argPOP3Password;
 }
 
 RASManager::~RASManager()
@@ -77,8 +79,8 @@ void RASManager::FetchPop3Mails()
 {
   try
   {    
-    Pop3Client client = Pop3Client("mail.bereuter.com",_Logger, 110);
-    client.login("home@bereuter.com","Quattro1");
+    Pop3Client client = Pop3Client(_POP3Server,_Logger, 110);
+    client.login(_POP3User,_POP3Password);
     client.setShortMessage(true);   
     vector<int> msgIdList;
     client.listMails(msgIdList);

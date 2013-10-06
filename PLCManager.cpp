@@ -197,8 +197,9 @@ bool PLCManager::OpenModBus()
     return result;
 }
 
-void PLCManager::WritePLCMessages()
+bool PLCManager::WritePLCMessages()
 {
+  bool result=true;
   
   while(!_SendQueue.empty())
   {
@@ -206,19 +207,21 @@ void PLCManager::WritePLCMessages()
     pthread_mutex_lock( &_SendQueueMutex );
     if(!_SendQueue.empty())
     {
-      WriteMessage(_SendQueue.front().MsgType,_SendQueue.front().ItemType,_SendQueue.front().ItemIndex,_SendQueue.front().Property,_SendQueue.front().Value);
+      result = WriteMessage(_SendQueue.front().MsgType,_SendQueue.front().ItemType,_SendQueue.front().ItemIndex,_SendQueue.front().Property,_SendQueue.front().Value);
       _SendQueue.pop();
     }
     pthread_mutex_unlock( &_SendQueueMutex );
     
     usleep(50000); //Easy going, think about PLC
-  }  
+  } 
+  
+  return result;
  
 }
 
 
 
-void PLCManager::ReadPLCMessages()
+bool PLCManager::ReadPLCMessages()
 {
   //Read MsgWritePOS from PLC
   int startAddr = 0x0000; 
@@ -230,7 +233,7 @@ void PLCManager::ReadPLCMessages()
   if(ret == -1)	
   {
     _Logger->Trace("Error modbus_read_registers " , modbus_strerror(errno) );
-    return;
+    return false;
   }
   
    
@@ -278,15 +281,16 @@ void PLCManager::ReadPLCMessages()
     {
       //TODO: MAybe Async
       _EventSubscriber->PLCMessageReceived(curMsg);
-    }
-	    
+    }    	    
   }  
+  return true;
 }
 
 void * PLCManager::ProcessingLoop()
 {
     int outputIdx = 0;
     timeval nowTime;
+    bool needsReconnect = false;
     while(1)
     { 
 	//logTrace( "Sending Alive-Message to PLC ");
@@ -296,10 +300,16 @@ void * PLCManager::ProcessingLoop()
 	gettimeofday(&nowTime,NULL);
 	long diffSec = nowTime.tv_sec - _LastAlivePing.tv_sec;
         long diffUsec = nowTime.tv_usec - _LastAlivePing.tv_usec;
+	bool connectionOK = true;
 	if(diffSec > 5 )
 	{	 
-	  WriteMessage(ItemMessageTypes::Alive, ItemTypes::Dummy, 0,ItemProperties::Value,256);	
+	  connectionOK = WriteMessage(ItemMessageTypes::Alive, ItemTypes::Dummy, 0,ItemProperties::Value,256);	
 	  _LastAlivePing = nowTime;
+	  if(!connectionOK)
+	  {
+	    needsReconnect = true;
+	    break;
+	  }	    
 	}
 	
 	WritePLCMessages();
@@ -308,6 +318,14 @@ void * PLCManager::ProcessingLoop()
 	usleep(100000);
 	
     }
+    
+    //This Thread will terminate hereafter, the last thing he does is Restarting
+    if(needsReconnect)
+    {
+      Stop();
+      Start();
+    }
+    
     return 0;
 }
 

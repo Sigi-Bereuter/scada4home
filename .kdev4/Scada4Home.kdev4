@@ -22,12 +22,19 @@ Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
 Arguments=
+Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
-Dependency Action=Nothing
+Dependency Action=Build
+Display Demangle Names=true
+Display Static Members=false
 EnvironmentGroup=default
 Executable=
 External Terminal=konsole --noclose --workdir %workdir -e %exe
-Project Target=Scada4Home,scada4home
+GDB Path=file:///usr/bin/gdb
+Project Target=Scada4Home2,scada4home
+Remote GDB Config Script=
+Remote GDB Run Script=
+Remote GDB Shell Script=
 Use External Terminal=false
 Working Directory=
 isExecutable=false

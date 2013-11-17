@@ -29,11 +29,11 @@ namespace ItemMessageTypes
 }
 namespace ItemTypes
 {
-  enum T : uint8_t {Jalousie=1,Rollo=2,Markise=3,Switch=4,Dummy=99};
+  enum T : uint8_t {Jalousie=1,Rollo=2,Markise=3,Switch=4,Gruppe=99,Dummy=999};
 }
 namespace ItemProperties
 {
-  enum T  : uint8_t {Status=1,Position=2,Value=3,All=99};
+  enum T  : uint8_t {Status=1,Position=2,Value=3,Func=4,All=99};
 }
 
 typedef struct

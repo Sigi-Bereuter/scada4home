@@ -92,19 +92,29 @@ ControlManager::ControlManager()
    string pop3Password="";
    result = _ConfigMap.find(CFG_POP3_SERVER);
    if(result == _ConfigMap.end())   
-      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_POP3_SERVER.c_str());  
+      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile, RAS-Manager will not be started!",CFG_POP3_SERVER.c_str());  
    else
    {
      pop3Server = (*result).second;
+     if(pop3Server == "")
+     {
+       _Logger->Log(LogTypes::Error, "Config-Key %s is empty, RAS-Manager will not be started!",CFG_POP3_SERVER.c_str());  
+       return;
+     }
      result = _ConfigMap.find(CFG_POP3_USER);
      if(result == _ConfigMap.end())   
-	_Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_POP3_USER.c_str());  
+	_Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile, RAS-Manager will not be started!",CFG_POP3_USER.c_str());  
      else
      {
        pop3User = (*result).second;
+       if(pop3Server == "")
+       {
+	  _Logger->Log(LogTypes::Error, "Config-Key %s is empty, RAS-Manager will not be started!",CFG_POP3_USER.c_str());  
+	  return;
+       }
        result = _ConfigMap.find(CFG_POP3_PASSWORD);
        if(result == _ConfigMap.end())   
-	  _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile",CFG_POP3_PASSWORD.c_str());  
+	  _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile, RAS-Manager will not be started!",CFG_POP3_PASSWORD.c_str());  
        else
        {
 	 pop3Password =  (*result).second;
@@ -190,7 +200,8 @@ bool ControlManager::Start()
   _PLC->Start();
   _CUL->Start();
   _HMI->Start();
-  _RAS->Start(); 
+  if(_RAS != NULL)
+    _RAS->Start(); 
   
   usleep(1000000);
   SyncPLCItems();  

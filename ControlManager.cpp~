@@ -25,6 +25,9 @@ ControlManager::ControlManager()
    string CFG_PLC_IPADRESS = "plc_ipaddress";
    string CFG_CUL_DEVICENAME = "cul_devicename";
    string CFG_HMI_WEBSERVER_PORT = "hmi_webserver_port";
+   string CFG_POP3_SERVER = "pop3_server";
+   string CFG_POP3_USER = "pop3_user";
+   string CFG_POP3_PASSWORD= "pop3_password";
    string CFG_LOG_LEVEL = "log_level";
    
    std::cout << "Init Logtracer..." << std::endl;
@@ -84,9 +87,33 @@ ControlManager::ControlManager()
    
    
    _Logger->Log(LogTypes::Audit, "Init RASManager...");
-   _RAS = new RASManager(_ItemRepo,this,_Logger);
-   
-   
+   string pop3Server="";
+   string pop3User= "";
+   string pop3Password="";
+   result = _ConfigMap.find(CFG_POP3_SERVER);
+   if(result == _ConfigMap.end())   
+      _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile, RAS-Manager will not be started!",CFG_POP3_SERVER.c_str());  
+   else
+   {
+     pop3Server = (*result).second;
+     if(pop3Server == "")
+       _Logger->Log(LogTypes::Error, "Config-Key %s is empty, RAS-Manager will not be started!",CFG_POP3_SERVER.c_str());      
+     result = _ConfigMap.find(CFG_POP3_USER);
+     if(result == _ConfigMap.end())   
+	_Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile, RAS-Manager will not be started!",CFG_POP3_USER.c_str());  
+     else
+     {
+       pop3User = (*result).second;
+       result = _ConfigMap.find(CFG_POP3_PASSWORD);
+       if(result == _ConfigMap.end())   
+	  _Logger->Log(LogTypes::Error, "Config-Key %s not found in Configfile, RAS-Manager will not be started!",CFG_POP3_PASSWORD.c_str());  
+       else
+       {
+	 pop3Password =  (*result).second;
+	  _RAS = new RASManager(_ItemRepo,this,pop3Server,pop3User,pop3Password,_Logger);
+       }
+     }
+   }     
 }
 
 ControlManager::~ControlManager()
@@ -165,7 +192,8 @@ bool ControlManager::Start()
   _PLC->Start();
   _CUL->Start();
   _HMI->Start();
-  _RAS->Start(); 
+  if(_RAS != NULL)
+    _RAS->Start(); 
   
   usleep(1000000);
   SyncPLCItems();  

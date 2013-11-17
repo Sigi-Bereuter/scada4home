@@ -1,0 +1,1 @@
+{"id":"gruppen","title":"Gruppen","icon":"house","link":"http://localhost:8080/rest/sitemaps/home/gruppen","widget":[{"widgetId":"gruppen_rollos_0","type":"Group","label":"Rollos","icon":"rollershutter","item":{"type":"GroupItem","name":"g_rollos","state":"Undefined","link":"http://localhost:8080/rest/items/g_rollos"},"linkedPage":"$linkedpage.gruppen_rollos$"}]}
